@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriIA MLP — Presentación Proyecto Final | UANL FIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600;1,9..144,700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Fraunces', 'Georgia', 'serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+            sans: ['DM Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cream: '#F9F6F0',
+            sage: '#EDF3EE',
+            forest: '#1A3C2B',
+            emeraldLeaf: '#2E6F40',
+            terracotta: '#E05A47',
+            amberGold: '#E69F24',
+            lavenderNode: '#7C5DFA',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #12241B;
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Contenedor principal tipo Canva Player */
+    #player-viewport {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(circle at 20% 20%, #1e3b2c 0%, #0f1f17 100%);
+      padding: 16px 16px 76px 16px;
+    }
+
+    /* Escenario 16:9 escalable */
+    #slide-stage {
+      width: 1280px;
+      height: 720px;
+      background-color: #F9F6F0;
+      border-radius: 24px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
+      position: relative;
+      overflow: hidden;
+      transform-origin: center center;
+      flex-shrink: 0;
+    }
+
+    /* Transiciones entre diapositivas */
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1280px;
+      height: 720px;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.985) translateY(6px);
+      transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 40px 54px;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+      z-index: 2;
+    }
+
+    /* Formas orgánicas estilo Canva */
+    .canva-blob-1 {
+      border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+    }
+    .canva-arch {
+      border-radius: 220px 220px 28px 28px;
+    }
+    .nom-octagon {
+      clip-path: polygon(29% 0%, 71% 0%, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0% 71%, 0% 29%);
+    }
+
+    /* Tarjetas editoriales */
+    .canva-card {
+      background: #FFFFFF;
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(26, 60, 43, 0.06);
+      border: 1px solid rgba(46, 111, 64, 0.12);
+    }
+
+    /* Contenedor de imagen con respaldo visual elegante */
+    .photo-box {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1A3C2B 0%, #2E6F40 100%);
+    }
+
+    /* Scrollbar limpio para notas */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(46, 111, 64, 0.3);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ESCENARIO PRINCIPAL -->
+  <div id="player-viewport">
+    <div id="slide-stage">
+
+      <!-- =====================================================================
+           DIAPOSITIVA 1: PORTADA EDITORIAL (0:00 - 0:45)
+           ===================================================================== -->
+      <section class="slide active bg-cream" data-slide="0">
+        <!-- Blobs decorativos orgánicos -->
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-sage canva-blob-1 opacity-90 pointer-events-none"></div>
+        <div class="absolute -bottom-28 right-1/3 w-80 h-80 bg-[#E69F24]/15 canva-blob-1 pointer-events-none"></div>
+        <svg class="absolute bottom-8 left-12 w-24 h-24 text-emeraldLeaf/15 pointer-events-none" viewBox="0 0 100 100" fill="currentColor">
+          <path d="M50 5 C75 20, 90 50, 50 95 C10 50, 25 20, 50 5 Z" />
+        </svg>
+
+        <div class="relative z-10 flex items-center justify-between h-full gap-12">
+          <!-- Columna Izquierda -->
+          <div class="w-[57%] flex flex-col justify-between h-full py-2">
+            <div class="flex flex-wrap items-center gap-2.5">
+              <span class="px-3.5 py-1.5 rounded-full bg-forest text-cream font-display font-bold text-xs tracking-wider uppercase">
+                UANL • FIME
+              </span>
+              <span class="px-3.5 py-1.5 rounded-full bg-sage text-forest border border-emeraldLeaf/25 font-display font-bold text-xs tracking-wider uppercase">
+                SEMINARIO DE SISTEMAS II • GRUPO 002
+              </span>
+            </div>
+
+            <div class="space-y-5 my-auto">
+              <div class="inline-flex items-center gap-2 text-emeraldLeaf font-display font-bold text-sm">
+                <span class="w-2.5 h-2.5 rounded-full bg-amberGold"></span>
+                PROYECTO FINAL • INTELIGENCIA ARTIFICIAL APLICADA
+              </div>
+              <h1 class="font-serif text-[46px] font-extrabold text-forest leading-[1.08] tracking-tight">
+                Clasificación Inteligente de Alimentos mediante <span class="italic text-emeraldLeaf">Red Neuronal Multicapa (MLP)</span>
+              </h1>
+              <p class="font-serif italic text-xl text-terracotta font-semibold">
+                “Comer bien también es un acto de amor propio — Calculadora nutricional e IA”
+              </p>
+            </div>
+
+            <!-- Tarjeta de Metadatos Académicos -->
+            <div class="canva-card p-5 border-l-4 border-l-emeraldLeaf flex items-center justify-between gap-4">
+              <div class="space-y-1">
+                <p class="text-[11px] font-display font-bold uppercase tracking-wider text-emeraldLeaf">Autoras (Ingeniería en Administrador de Sistemas)</p>
+                <p class="font-display font-bold text-sm text-forest">
+                  Andrea Portillo Rodríguez <span class="font-mono text-xs text-slate-500">(2001785 - IAS)</span>
+                </p>
+                <p class="font-display font-bold text-sm text-forest">
+                  Leslie Alejandra Flores Martínez <span class="font-mono text-xs text-slate-500">(1981791 - IAS)</span>
+                </p>
+              </div>
+              <div class="h-12 w-px bg-slate-200"></div>
+              <div class="text-right space-y-1">
+                <p class="text-[11px] font-display font-bold uppercase tracking-wider text-slate-400">Docente</p>
+                <p class="font-display font-bold text-sm text-forest">Dr. Tomás Eloy Salais Fierro</p>
+                <p class="text-xs font-medium text-slate-500">Monterrey, Nuevo León · 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Arco Orgánico con Imagen -->
+          <div class="w-[43%] h-full flex items-center justify-center relative">
+            <div class="relative w-[430px] h-[585px]">
+              <div class="absolute -inset-3 bg-gradient-to-tr from-emeraldLeaf/25 via-amberGold/20 to-lavenderNode/20 canva-arch"></div>
+              <div class="photo-box relative w-full h-full canva-arch shadow-2xl border-4 border-white">
+                <img
+                  src="watermarked_img_1250628612014948629.jpg"
+                  data-fallback="healthy"
+                  alt="Alimentos frescos y saludables variados"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <!-- Píldoras flotantes estilo Canva -->
+              <div class="absolute -left-8 top-14 bg-white/95 backdrop-blur px-4 py-2.5 rounded-2xl shadow-lg border border-emeraldLeaf/20 flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-emeraldLeaf"></span>
+                <div>
+                  <span class="block font-display font-extrabold text-xs text-forest">Arquitectura MLP</span>
+                  <span class="block font-mono text-[11px] text-slate-500">8 → 16 → 8 → 3</span>
+                </div>
+              </div>
+              <div class="absolute -right-5 bottom-12 bg-forest text-cream px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5">
+                <span class="text-amberGold text-lg">✦</span>
+                <div>
+                  <span class="block font-display font-bold text-xs">Evaluación en Tiempo Real</span>
+                  <span class="block text-[11px] text-emerald-200">3 Niveles Nutricionales</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 2: CONTEXTO Y PLANTEAMIENTO DEL PROBLEMA (0:45 - 1:35)
+           ===================================================================== -->
+      <section class="slide bg-cream" data-slide="1">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-terracotta/10 canva-blob-1 pointer-events-none"></div>
+
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-terracotta/15 text-terracotta font-display font-bold text-xs uppercase tracking-wider">
+              01 · Contexto y Planteamiento del Problema
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              El desafío de interpretar <span class="italic text-terracotta">etiquetas nutricionales</span> en México
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-400">0:45 – 1:35</span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-7 flex-1 items-stretch">
+          <!-- Columna Izquierda: Estadísticas UNICEF & Atlas 2026 -->
+          <div class="col-span-7 flex flex-col justify-between gap-5">
+            <div class="grid grid-cols-2 gap-5">
+              <div class="canva-card p-6 bg-gradient-to-br from-white to-sage/60 border-t-4 border-t-terracotta">
+                <span class="font-display font-bold text-xs uppercase tracking-wider text-terracotta">UNICEF México</span>
+                <p class="font-serif text-5xl font-extrabold text-forest my-2">1 de cada 3</p>
+                <p class="text-sm text-slate-700 leading-snug">
+                  Niñas y niños mayores de 5 años presentan <strong>sobrepeso u obesidad</strong> desde la infancia temprana.
+                </p>
+              </div>
+              <div class="canva-card p-6 bg-gradient-to-br from-white to-amberGold/10 border-t-4 border-t-amberGold">
+                <span class="font-display font-bold text-xs uppercase tracking-wider text-amber-700">Atlas Mundial Obesidad 2026</span>
+                <p class="font-serif text-5xl font-extrabold text-forest my-2">8° Lugar</p>
+                <p class="text-sm text-slate-700 leading-snug">
+                  A nivel mundial con <strong>más de 13 millones</strong> de niños y adolescentes (5–19 años) con IMC elevado.
+                </p>
+              </div>
+            </div>
+
+            <div class="canva-card p-6 flex-1 flex flex-col justify-between">
+              <div class="space-y-3">
+                <h3 class="font-display font-extrabold text-lg text-forest flex items-center gap-2">
+                  <span class="w-7 h-7 rounded-lg bg-forest text-cream flex items-center justify-center text-xs">!</span>
+                  ¿Por qué persiste la dificultad al elegir alimentos?
+                </h3>
+                <p class="text-sm text-slate-700 leading-relaxed">
+                  Aunque México implementó el etiquetado frontal <strong>NOM-051</strong>, en la compra cotidiana resulta complejo analizar simultáneamente las <strong>8 variables críticas</strong> (calorías, azúcares, grasas saturadas, sodio, proteínas y fibra) y comprender si un producto es equilibrado en su conjunto.
+                </p>
+              </div>
+
+              <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                <span class="text-xs font-display font-bold text-slate-500 uppercase">Sellos NOM-051:</span>
+                <div class="flex items-center gap-2.5">
+                  <div class="nom-octagon w-14 h-14 bg-slate-900 text-white flex items-center justify-center text-center p-1">
+                    <span class="text-[7px] font-display font-extrabold leading-tight">EXCESO CALORÍAS</span>
+                  </div>
+                  <div class="nom-octagon w-14 h-14 bg-slate-900 text-white flex items-center justify-center text-center p-1">
+                    <span class="text-[7px] font-display font-extrabold leading-tight">EXCESO AZÚCARES</span>
+                  </div>
+                  <div class="nom-octagon w-14 h-14 bg-slate-900 text-white flex items-center justify-center text-center p-1">
+                    <span class="text-[7px] font-display font-extrabold leading-tight">EXCESO GRASAS SAT.</span>
+                  </div>
+                  <div class="nom-octagon w-14 h-14 bg-slate-900 text-white flex items-center justify-center text-center p-1">
+                    <span class="text-[7px] font-display font-extrabold leading-tight">EXCESO SODIO</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Imagen Editorial Lectura de Etiquetas -->
+          <div class="col-span-5 flex flex-col">
+            <div class="canva-card p-4 h-full flex flex-col justify-between bg-sage/60">
+              <div class="photo-box relative flex-1 rounded-2xl">
+                <img
+                  src="watermarked_img_18378294080723200276.jpg"
+                  data-fallback="label"
+                  alt="Lectura de tabla nutrimental con lupa y sellos NOM-051"
+                  class="w-full h-full object-cover"
+                />
+                <div class="absolute bottom-3 left-3 right-3 bg-forest/95 backdrop-blur text-cream p-3.5 rounded-xl">
+                  <p class="font-display font-bold text-xs text-amberGold">Público Prioritario</p>
+                  <p class="text-xs text-slate-200 mt-0.5">
+                    Niños, adolescentes, jóvenes y padres de familia que buscan decisiones de consumo informadas.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 3: OBJETIVOS Y ALCANCE DEL PROYECTO (1:35 - 2:20)
+           ===================================================================== -->
+      <section class="slide bg-sage" data-slide="2">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs uppercase tracking-wider">
+              02 · Objetivos y Alcance
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Tecnología educativa para <span class="italic text-emeraldLeaf">decisiones conscientes</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-500">1:35 – 2:20</span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 flex-1 items-stretch mb-3">
+          <!-- Columna Izquierda: Objetivo General + 4 Objetivos Específicos -->
+          <div class="col-span-8 flex flex-col justify-between gap-4">
+            <div class="canva-card p-5 bg-forest text-cream flex items-center justify-between gap-5">
+              <div class="space-y-1">
+                <span class="text-xs font-display font-bold uppercase tracking-widest text-amberGold">Objetivo General</span>
+                <p class="font-serif text-xl font-bold leading-snug">
+                  Desarrollar una plataforma web capaz de calcular calorías por porción y clasificar alimentos según su perfil nutricional mediante una <span class="italic text-emerald-300">Red Neuronal Multicapa (MLP)</span>.
+                </p>
+              </div>
+              <div class="w-14 h-14 rounded-2xl bg-emeraldLeaf flex items-center justify-center shrink-0 shadow-lg">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 flex-1">
+              <div class="canva-card p-4 flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-amberGold/15 text-amber-700 flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="font-mono text-[11px] font-bold text-amber-700">OBJETIVO 01</span>
+                  <h3 class="font-display font-extrabold text-sm text-forest">Calculadora de Calorías</h3>
+                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                    Estimar de forma exacta el aporte energético y de macronutrientes según los gramos o mililitros de la porción.
+                  </p>
+                </div>
+              </div>
+
+              <div class="canva-card p-4 flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-emeraldLeaf/15 text-emeraldLeaf flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="font-mono text-[11px] font-bold text-emeraldLeaf">OBJETIVO 02</span>
+                  <h3 class="font-display font-extrabold text-sm text-forest">Análisis Multi-Nutriente</h3>
+                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                    Estandarizar 8 atributos nutricionales por cada 100 g/ml (calorías, azúcares, grasas, sodio, proteína y fibra).
+                  </p>
+                </div>
+              </div>
+
+              <div class="canva-card p-4 flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-lavenderNode/15 text-lavenderNode flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="font-mono text-[11px] font-bold text-lavenderNode">OBJETIVO 03</span>
+                  <h3 class="font-display font-extrabold text-sm text-forest">Red Neuronal MLP</h3>
+                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                    Clasificar en 3 niveles: <strong>Saludable</strong>, <strong>Moderado</strong> y <strong>Poco Saludable</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <div class="canva-card p-4 flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-terracotta/15 text-terracotta flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="font-mono text-[11px] font-bold text-terracotta">OBJETIVO 04</span>
+                  <h3 class="font-display font-extrabold text-sm text-forest">Interfaz Web Accesible</h3>
+                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                    Diseñar una experiencia visual amigable con explicaciones claras y sellos preventivos NOM-051.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Bowl Saludable Visual -->
+          <div class="col-span-4 canva-card p-4 flex flex-col justify-between bg-white">
+            <div class="photo-box relative flex-1 rounded-2xl">
+              <img
+                src="watermarked_img_10181786268219419784.jpg"
+                data-fallback="bowl"
+                alt="Bowl saludable de avena con frutos rojos y semillas"
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/95 text-forest font-display font-extrabold text-[11px] shadow">
+                OMS · Equilibrio y Suficiencia
+              </div>
+              <div class="absolute bottom-3 left-3 right-3 bg-forest/95 backdrop-blur text-cream p-3 rounded-xl">
+                <p class="font-display font-bold text-xs text-emerald-300">Hábitos desde la Juventud</p>
+                <p class="text-[11px] text-slate-200 mt-0.5">
+                  Facilitar la lectura de nutrientes promueve decisiones informadas en familia.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-5 py-2 rounded-2xl bg-white/95 border border-terracotta/30 flex items-center justify-center gap-3 text-xs font-display font-bold text-forest">
+          <span class="px-2.5 py-0.5 rounded-full bg-terracotta text-white uppercase text-[10px]">Alcance Ético</span>
+          Herramienta educativa y orientativa — No sustituye diagnóstico ni prescripción médica personalizada.
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 4: ARQUITECTURA DUAL — CÓMO FUNCIONA (2:20 - 3:10)
+           ===================================================================== -->
+      <section class="slide bg-cream" data-slide="3">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs uppercase tracking-wider">
+              03 · Funcionamiento del Sistema
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Arquitectura Dual: <span class="italic text-emeraldLeaf">Cálculo Exacto + Inteligencia Artificial</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-400">2:20 – 3:10</span>
+        </div>
+
+        <p class="text-sm text-slate-600 max-w-4xl mb-4">
+          El sistema separa intencionalmente la aritmética nutricional de la clasificación inteligente para garantizar transparencia y precisión en cada etapa:
+        </p>
+
+        <div class="grid grid-cols-12 gap-4 flex-1 items-stretch">
+          <!-- Paso 1: Usuario con Fotografía de Escaneo Nutricional -->
+          <div class="col-span-3 canva-card p-5 flex flex-col justify-between border-t-4 border-t-forest">
+            <div>
+              <span class="px-2.5 py-1 rounded-lg bg-forest text-cream font-mono text-xs font-bold">PASO 1 · ENTRADA</span>
+              <h3 class="font-display font-extrabold text-lg text-forest mt-2.5">Usuario y Etiqueta</h3>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                Captura los <strong>8 datos</strong> por 100 g/ml del producto y define su porción real consumida.
+              </p>
+            </div>
+            <div class="photo-box h-36 rounded-2xl my-2 border border-emeraldLeaf/20">
+              <img
+                src="watermarked_img_12683319042039962855.jpg"
+                data-fallback="scan"
+                alt="Escaneo nutricional de producto en supermercado"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div class="p-2.5 rounded-xl bg-sage text-xs font-mono text-forest space-y-0.5">
+              <div>• Base: 100 g / 100 ml</div>
+              <div>• Porción: ej. 30 g</div>
+            </div>
+          </div>
+
+          <!-- Procesos Paralelos A y B -->
+          <div class="col-span-6 flex flex-col gap-4">
+            <!-- Proceso A -->
+            <div class="canva-card p-5 flex-1 border-l-4 border-l-amberGold flex flex-col justify-between bg-gradient-to-r from-white to-amberGold/10">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-lg bg-amberGold/20 text-amber-800 font-mono text-xs font-bold">PROCESO A · DETERMINISTA</span>
+                <span class="text-xs font-display font-bold text-amber-700">Operación Matemática</span>
+              </div>
+              <div>
+                <h3 class="font-display font-extrabold text-lg text-forest">2. Calculadora Matemática de Calorías</h3>
+                <div class="mt-2 px-4 py-2 rounded-xl bg-forest text-amberGold font-mono text-sm font-bold inline-block">
+                  Kcal = (Kcal_100g × gramos) ÷ 100
+                </div>
+              </div>
+              <p class="text-xs text-slate-600">
+                <strong>Ejemplo práctico:</strong> Un producto con 250 kcal/100g en una porción de 30g aporta exactamente <strong>75 kcal</strong>.
+              </p>
+            </div>
+
+            <!-- Proceso B -->
+            <div class="canva-card p-5 flex-1 border-l-4 border-l-lavenderNode flex flex-col justify-between bg-gradient-to-r from-white to-lavenderNode/10">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-lg bg-lavenderNode/15 text-lavenderNode font-mono text-xs font-bold">PROCESO B · INTELIGENCIA ARTIFICIAL</span>
+                <span class="text-xs font-display font-bold text-lavenderNode">Modelo Neuronal</span>
+              </div>
+              <div>
+                <h3 class="font-display font-extrabold text-lg text-forest">3. Inferencia con Red Neuronal Multicapa (MLP)</h3>
+                <p class="text-xs text-slate-600 mt-1">
+                  Normaliza las 8 variables por 100g mediante <code class="font-mono text-forest font-bold">StandardScaler</code> y evalúa interacciones no lineales entre macronutrientes y micronutrientes.
+                </p>
+              </div>
+              <div class="flex gap-2 text-[11px] font-mono font-bold text-forest">
+                <span class="px-2.5 py-0.5 rounded bg-sage">ReLU Oculta</span>
+                <span class="px-2.5 py-0.5 rounded bg-sage">Softmax Salida</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paso 4: Resultado Integral -->
+          <div class="col-span-3 canva-card p-5 flex flex-col justify-between bg-forest text-cream">
+            <div>
+              <span class="px-2.5 py-1 rounded-lg bg-emeraldLeaf text-white font-mono text-xs font-bold">PASO 4 · SALIDA</span>
+              <h3 class="font-display font-extrabold text-xl mt-3">Resultado Visual</h3>
+              <p class="text-xs text-emerald-100 mt-2 leading-relaxed">
+                El usuario recibe una orientación clara, visual y accionable en milisegundos:
+              </p>
+            </div>
+            <div class="space-y-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-white/10 flex items-center justify-between">
+                <span>Calorías por porción</span>
+                <span class="font-mono font-bold text-amberGold">kcal</span>
+              </div>
+              <div class="p-3 rounded-xl bg-emeraldLeaf/80 flex items-center justify-between font-bold">
+                <span>Semáforo de Salud</span>
+                <span>3 Clases</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/10 flex items-center justify-between">
+                <span>Sellos NOM-051</span>
+                <span class="text-terracotta font-bold">Alertas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 5: ¿POR QUÉ UNA RED NEURONAL MULTICAPA (MLP)? (3:10 - 4:05)
+           ===================================================================== -->
+      <section class="slide bg-sage" data-slide="4">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-lavenderNode/15 text-lavenderNode font-display font-bold text-xs uppercase tracking-wider">
+              04 · Justificación Técnica (Actividad 7)
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              ¿Por qué elegir un <span class="italic text-lavenderNode">Perceptrón Multicapa (MLP)</span>?
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-500">3:10 – 4:05</span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 flex-1 items-stretch">
+          <!-- Columna Izquierda: Definición + 3 Razones Técnicas -->
+          <div class="col-span-7 flex flex-col justify-between gap-4">
+            <div class="canva-card p-5 border-l-4 border-l-lavenderNode">
+              <span class="text-xs font-display font-bold uppercase tracking-wider text-lavenderNode">Tipo de Red Seleccionada</span>
+              <h3 class="font-display font-extrabold text-xl text-forest mt-0.5">
+                Red Neuronal Feedforward — Multilayer Perceptron (MLP)
+              </h3>
+              <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                Arquitectura acíclica unidireccional donde la información fluye desde la capa de entrada, atraviesa dos capas ocultas densas con activación no lineal y finaliza en la capa de salida multiclase.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3.5 flex-1">
+              <div class="canva-card p-4 flex items-start gap-4">
+                <div class="w-11 h-11 rounded-2xl bg-emeraldLeaf text-white flex items-center justify-center font-mono font-bold text-sm shrink-0">01</div>
+                <div>
+                  <h4 class="font-display font-extrabold text-base text-forest">Naturaleza Tabular y Numérica de los Datos</h4>
+                  <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                    A diferencia de visión artificial (CNN) o series temporales (RNN), los atributos nutricionales por 100 g son vectores tabulares estructurados ideales para capas densas MLP.
+                  </p>
+                </div>
+              </div>
+
+              <div class="canva-card p-4 flex items-start gap-4">
+                <div class="w-11 h-11 rounded-2xl bg-lavenderNode text-white flex items-center justify-center font-mono font-bold text-sm shrink-0">02</div>
+                <div>
+                  <h4 class="font-display font-extrabold text-base text-forest">Modelado de Relaciones No Lineales</h4>
+                  <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                    El valor saludable no es una suma lineal: la MLP aprende cómo la <strong>fibra dietética</strong> o la <strong>proteína</strong> modulan el impacto de grasas y azúcares.
+                  </p>
+                </div>
+              </div>
+
+              <div class="canva-card p-4 flex items-start gap-4">
+                <div class="w-11 h-11 rounded-2xl bg-amberGold text-forest flex items-center justify-center font-mono font-bold text-sm shrink-0">03</div>
+                <div>
+                  <h4 class="font-display font-extrabold text-base text-forest">Eficiencia Computacional en Tiempo Real</h4>
+                  <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                    Bajo costo de inferencia que permite ejecutar la clasificación directamente en aplicaciones web y móviles en milisegundos.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Visualización 3D de Red Neuronal -->
+          <div class="col-span-5 canva-card p-4 flex flex-col justify-between bg-white">
+            <div class="photo-box relative flex-1 rounded-2xl">
+              <img
+                src="watermarked_img_6640593288691107170.jpg"
+                data-fallback="neural"
+                alt="Visualización 3D de nodos y conexiones de red neuronal multicapa"
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-forest/90 text-cream font-mono text-[11px] font-bold">
+                Feedforward • Sin Ciclos
+              </div>
+              <div class="absolute bottom-3 left-3 right-3 bg-forest/95 backdrop-blur text-cream p-3.5 rounded-xl">
+                <p class="font-display font-bold text-xs text-amberGold">Interacciones Multi-Nutriente</p>
+                <p class="text-xs text-slate-200 mt-0.5">
+                  Las capas ocultas combinan los 8 indicadores simultáneamente para descubrir patrones de salud.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 6: ARQUITECTURA DETALLADA DE CAPAS (8 -> 16 -> 8 -> 3) (4:05 - 5:05)
+           ===================================================================== -->
+      <section class="slide bg-cream" data-slide="5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs uppercase tracking-wider">
+              05 · Topología de la Red Neuronal
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Estructura de 4 Capas: <span class="font-mono text-emeraldLeaf">8 → 16 → 8 → 3</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-400">4:05 – 5:05 · Haz clic en una capa</span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 flex-1 items-center">
+          <!-- Diagrama SVG Interactivo -->
+          <div class="col-span-8 canva-card p-4 h-[495px] flex flex-col justify-between bg-sage/50">
+            <svg id="slide-mlp-svg" viewBox="0 0 780 430" class="w-full h-full select-none"></svg>
+          </div>
+
+          <!-- Tarjetas de Detalle por Capa -->
+          <div class="col-span-4 flex flex-col justify-between h-[495px] gap-3">
+            <div data-layer-card="0" class="layer-card cursor-pointer canva-card p-4 border-l-4 border-l-forest bg-white transition">
+              <div class="flex items-center justify-between">
+                <span class="font-display font-extrabold text-sm text-forest">1. Capa de Entrada</span>
+                <span class="px-2 py-0.5 rounded bg-forest text-cream font-mono text-xs font-bold">8 Neuronas</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                Calorías, Azúcares, Grasas tot., Grasas sat., Sodio, Proteínas, Fibra y Carbohidratos (por 100 g).
+              </p>
+            </div>
+
+            <div data-layer-card="1" class="layer-card cursor-pointer canva-card p-4 border-l-4 border-l-lavenderNode bg-white transition">
+              <div class="flex items-center justify-between">
+                <span class="font-display font-extrabold text-sm text-forest">2. Primera Capa Oculta</span>
+                <span class="px-2 py-0.5 rounded bg-lavenderNode text-white font-mono text-xs font-bold">16 · ReLU</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                <code class="font-mono text-lavenderNode font-bold">f(x) = max(0, x)</code>. Extrae combinaciones iniciales entre macronutrientes y evita desvanecimiento del gradiente.
+              </p>
+            </div>
+
+            <div data-layer-card="2" class="layer-card cursor-pointer canva-card p-4 border-l-4 border-l-emeraldLeaf bg-white transition">
+              <div class="flex items-center justify-between">
+                <span class="font-display font-extrabold text-sm text-forest">3. Segunda Capa Oculta</span>
+                <span class="px-2 py-0.5 rounded bg-emeraldLeaf text-white font-mono text-xs font-bold">8 · ReLU</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                Comprime y refina los patrones extraídos en representaciones nutricionales de mayor abstracción.
+              </p>
+            </div>
+
+            <div data-layer-card="3" class="layer-card cursor-pointer canva-card p-4 border-l-4 border-l-amberGold bg-white transition">
+              <div class="flex items-center justify-between">
+                <span class="font-display font-extrabold text-sm text-forest">4. Capa de Salida</span>
+                <span class="px-2 py-0.5 rounded bg-amberGold text-forest font-mono text-xs font-bold">3 · Softmax</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                Convierte los logits en probabilidades que suman <strong>1.0 (100%)</strong>: Saludable, Moderado y Poco Saludable.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 7: FUENTES DE DATOS Y PREPROCESAMIENTO (5:05 - 5:55)
+           ===================================================================== -->
+      <section class="slide bg-sage" data-slide="6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs uppercase tracking-wider">
+              06 · Ingeniería de Datos
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Fuentes de Datos y <span class="italic text-emeraldLeaf">Preprocesamiento</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-500">5:05 – 5:55</span>
+        </div>
+
+        <!-- 3 Fuentes de Datos con Miniaturas Fotográficas -->
+        <div class="grid grid-cols-3 gap-5 mb-5">
+          <div class="canva-card p-4 border-t-4 border-t-emeraldLeaf flex items-center gap-3.5">
+            <div class="photo-box w-20 h-20 rounded-2xl shrink-0 border border-emeraldLeaf/20">
+              <img
+                src="watermarked_img_1250628612014948629.jpg"
+                data-fallback="healthy"
+                alt="USDA FoodData Central"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <span class="font-mono text-[10px] font-bold text-emeraldLeaf">FUENTE 01</span>
+              <h3 class="font-display font-extrabold text-base text-forest">USDA FoodData Central</h3>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">
+                Más de <strong>300,000 registros</strong> nutricionales estandarizados.
+              </p>
+            </div>
+          </div>
+
+          <div class="canva-card p-4 border-t-4 border-t-amberGold flex items-center gap-3.5">
+            <div class="photo-box w-20 h-20 rounded-2xl shrink-0 border border-amberGold/20">
+              <img
+                src="watermarked_img_12683319042039962855.jpg"
+                data-fallback="scan"
+                alt="Open Food Facts"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <span class="font-mono text-[10px] font-bold text-amber-700">FUENTE 02</span>
+              <h3 class="font-display font-extrabold text-base text-forest">Open Food Facts</h3>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">
+                Base abierta mundial de productos comerciales procesados.
+              </p>
+            </div>
+          </div>
+
+          <div class="canva-card p-4 border-t-4 border-t-terracotta flex items-center gap-3.5">
+            <div class="photo-box w-20 h-20 rounded-2xl shrink-0 border border-terracotta/20">
+              <img
+                src="watermarked_img_18378294080723200276.jpg"
+                data-fallback="label"
+                alt="Etiquetas Locales México"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <span class="font-mono text-[10px] font-bold text-terracotta">FUENTE 03</span>
+              <h3 class="font-display font-extrabold text-base text-forest">Etiquetas México</h3>
+              <p class="text-xs text-slate-600 mt-0.5 leading-snug">
+                Validación con tablas y sellos <strong>NOM-051</strong> locales.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pipeline de Preparación y StandardScaler -->
+        <div class="canva-card p-6 flex-1 flex flex-col justify-between bg-white">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-display font-extrabold text-lg text-forest">Pipeline de Limpieza y Estandarización</h3>
+              <p class="text-xs text-slate-600">8 pasos rigurosos para evitar comparaciones injustas y fuga de datos (data leakage)</p>
+            </div>
+            <div class="px-4 py-2 rounded-xl bg-forest text-cream font-mono text-xs font-bold">
+              StandardScaler: z = (x - μ) / σ
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-3 my-2">
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-emeraldLeaf">01 · RECOLECTAR</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">Fuente, fecha y producto</p>
+            </div>
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-emeraldLeaf">02 · LIMPIAR</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">Eliminar duplicados y ruido</p>
+            </div>
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-emeraldLeaf">03 · UNIFICAR</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">Base estándar por 100 g/ml</p>
+            </div>
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-emeraldLeaf">04 · FALTANTES</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">Imputación documentada</p>
+            </div>
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-amber-700">05 · CODIFICAR</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">One-Hot Encoding (3 clases)</p>
+            </div>
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-amber-700">06 · NORMALIZAR</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">Sodio (mg) vs Grasas (g)</p>
+            </div>
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-amber-700">07 · SEPARAR</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">70% Train · 15% Val · 15% Test</p>
+            </div>
+            <div class="p-3 rounded-xl bg-cream border border-emeraldLeaf/15">
+              <span class="font-mono text-[11px] font-bold text-amber-700">08 · BALANCEAR</span>
+              <p class="text-xs text-slate-700 font-semibold mt-0.5">Proporción estratificada</p>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-500">
+            <strong>Regla crítica:</strong> <code class="font-mono text-forest font-bold">StandardScaler</code> se ajusta exclusivamente con los datos de entrenamiento para evitar fuga de información hacia validación y prueba.
+          </p>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 8: EJEMPLOS DEL DATASET Y CASOS DE CLASIFICACIÓN (5:55 - 6:45)
+           ===================================================================== -->
+      <section class="slide bg-cream" data-slide="7">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs uppercase tracking-wider">
+              07 · Muestras del Dataset (Por 100 g / 100 ml)
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Ejemplos de Clasificación <span class="italic text-emeraldLeaf">Nutricional</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-400">5:55 – 6:45</span>
+        </div>
+
+        <div class="canva-card overflow-hidden flex-1 flex flex-col justify-between">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-forest text-cream font-display text-xs uppercase tracking-wider">
+                <th class="py-3 px-5">Alimento (100 g/ml)</th>
+                <th class="py-3 px-4">Calorías</th>
+                <th class="py-3 px-4">Azúcares</th>
+                <th class="py-3 px-4">Grasas / Sat.</th>
+                <th class="py-3 px-4">Sodio</th>
+                <th class="py-3 px-4">Proteína / Fibra</th>
+                <th class="py-3 px-5">Clasificación MLP</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm">
+              <tr class="hover:bg-sage/40">
+                <td class="py-2.5 px-5 font-display font-bold text-forest">
+                  <div class="flex items-center gap-3">
+                    <div class="photo-box w-10 h-10 rounded-xl shrink-0 border border-emeraldLeaf/20">
+                      <img src="watermarked_img_1250628612014948629.jpg" data-fallback="healthy" alt="Manzana" class="w-full h-full object-cover" />
+                    </div>
+                    <span>Manzana fresca</span>
+                  </div>
+                </td>
+                <td class="py-2.5 px-4 font-mono">52 kcal</td>
+                <td class="py-2.5 px-4 font-mono">10.4 g</td>
+                <td class="py-2.5 px-4 font-mono">0.2 g / 0 g</td>
+                <td class="py-2.5 px-4 font-mono">1 mg</td>
+                <td class="py-2.5 px-4 font-mono">0.3 g / 2.4 g</td>
+                <td class="py-2.5 px-5"><span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs">● Saludable</span></td>
+              </tr>
+              <tr class="hover:bg-sage/40">
+                <td class="py-2.5 px-5 font-display font-bold text-forest">
+                  <div class="flex items-center gap-3">
+                    <div class="photo-box w-10 h-10 rounded-xl shrink-0 border border-emeraldLeaf/20">
+                      <img src="watermarked_img_10181786268219419784.jpg" data-fallback="bowl" alt="Avena" class="w-full h-full object-cover" />
+                    </div>
+                    <span>Avena en hojuelas</span>
+                  </div>
+                </td>
+                <td class="py-2.5 px-4 font-mono">389 kcal</td>
+                <td class="py-2.5 px-4 font-mono">0.9 g</td>
+                <td class="py-2.5 px-4 font-mono">6.9 g / 1.2 g</td>
+                <td class="py-2.5 px-4 font-mono">2 mg</td>
+                <td class="py-2.5 px-4 font-mono font-bold text-emeraldLeaf">16.9 g / 10.6 g</td>
+                <td class="py-2.5 px-5"><span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs">● Saludable</span></td>
+              </tr>
+              <tr class="hover:bg-sage/40">
+                <td class="py-2.5 px-5 font-display font-bold text-forest">
+                  <div class="flex items-center gap-3">
+                    <div class="photo-box w-10 h-10 rounded-xl shrink-0 border border-emeraldLeaf/20">
+                      <img src="watermarked_img_1014011011481467546.jpg" data-fallback="dashboard" alt="Yogur" class="w-full h-full object-cover" />
+                    </div>
+                    <span>Yogur natural</span>
+                  </div>
+                </td>
+                <td class="py-2.5 px-4 font-mono">61 kcal</td>
+                <td class="py-2.5 px-4 font-mono">4.7 g</td>
+                <td class="py-2.5 px-4 font-mono">3.3 g / 2.1 g</td>
+                <td class="py-2.5 px-4 font-mono">46 mg</td>
+                <td class="py-2.5 px-4 font-mono">3.5 g / 0.0 g</td>
+                <td class="py-2.5 px-5"><span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs">● Saludable</span></td>
+              </tr>
+              <tr class="hover:bg-terracotta/5">
+                <td class="py-2.5 px-5 font-display font-bold text-forest">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-terracotta/15 text-terracotta flex items-center justify-center shrink-0">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3h6l1 4H8l1-4zm-1 4h8l-1 13H9L8 7z" /></svg>
+                    </div>
+                    <span>Refresco regular</span>
+                  </div>
+                </td>
+                <td class="py-2.5 px-4 font-mono">42 kcal</td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">10.6 g</td>
+                <td class="py-2.5 px-4 font-mono">0.0 g / 0 g</td>
+                <td class="py-2.5 px-4 font-mono">1 mg</td>
+                <td class="py-2.5 px-4 font-mono text-terracotta">0.0 g / 0.0 g</td>
+                <td class="py-2.5 px-5"><span class="px-3 py-1 rounded-full bg-terracotta/15 text-terracotta font-display font-bold text-xs">● Poco Saludable</span></td>
+              </tr>
+              <tr class="hover:bg-terracotta/5">
+                <td class="py-2.5 px-5 font-display font-bold text-forest">
+                  <div class="flex items-center gap-3">
+                    <div class="photo-box w-10 h-10 rounded-xl shrink-0 border border-terracotta/20">
+                      <img src="watermarked_img_18378294080723200276.jpg" data-fallback="label" alt="Papas fritas" class="w-full h-full object-cover" />
+                    </div>
+                    <span>Papas fritas</span>
+                  </div>
+                </td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">312 kcal</td>
+                <td class="py-2.5 px-4 font-mono">0.3 g</td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">15.0 g / 4.5 g</td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">500 mg</td>
+                <td class="py-2.5 px-4 font-mono">3.4 g / 3.1 g</td>
+                <td class="py-2.5 px-5"><span class="px-3 py-1 rounded-full bg-terracotta/15 text-terracotta font-display font-bold text-xs">● Poco Saludable</span></td>
+              </tr>
+              <tr class="hover:bg-terracotta/5">
+                <td class="py-2.5 px-5 font-display font-bold text-forest">
+                  <div class="flex items-center gap-3">
+                    <div class="photo-box w-10 h-10 rounded-xl shrink-0 border border-amberGold/30">
+                      <img src="watermarked_img_12683319042039962855.jpg" data-fallback="scan" alt="Galletas dulces" class="w-full h-full object-cover" />
+                    </div>
+                    <span>Galletas dulces</span>
+                  </div>
+                </td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">480 kcal</td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">25.0 g</td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">20.0 g / 8.0 g</td>
+                <td class="py-2.5 px-4 font-mono font-bold text-terracotta">400 mg</td>
+                <td class="py-2.5 px-4 font-mono">6.0 g / 2.0 g</td>
+                <td class="py-2.5 px-5"><span class="px-3 py-1 rounded-full bg-terracotta/15 text-terracotta font-display font-bold text-xs">● Poco Saludable</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="bg-sage/70 px-6 py-3 flex items-center justify-between text-xs text-forest">
+            <span><strong>Hallazgo clave de la MLP:</strong> Un refresco tiene pocas calorías (42 kcal), pero la red detecta azúcares libres sin fibra ni proteína y lo clasifica como <strong>Poco Saludable</strong>.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 9: ALGORITMO DE ENTRENAMIENTO Y CONTROL OVERFITTING (6:45 - 7:35)
+           ===================================================================== -->
+      <section class="slide bg-sage" data-slide="8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-lavenderNode/15 text-lavenderNode font-display font-bold text-xs uppercase tracking-wider">
+              08 · Entrenamiento Supervisado
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Backpropagation, <span class="italic text-lavenderNode">Optimizador Adam</span> y Regularización
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-500">6:45 – 7:35</span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 flex-1 items-stretch">
+          <!-- Columna Izquierda: 3 Fases + Regularización -->
+          <div class="col-span-6 flex flex-col justify-between gap-3.5">
+            <div class="canva-card p-4 border-l-4 border-l-forest">
+              <span class="font-mono text-[11px] font-bold text-emeraldLeaf">FASE 1 · PROPAGACIÓN HACIA ADELANTE</span>
+              <h3 class="font-display font-extrabold text-base text-forest">Forward Pass (W·x + b)</h3>
+              <p class="text-xs text-slate-600 mt-1">
+                Multiplica entradas por pesos <strong>W</strong>, suma sesgos <strong>b</strong>, aplica <strong>ReLU</strong> en capas ocultas y obtiene probabilidades mediante <strong>Softmax</strong>.
+              </p>
+            </div>
+
+            <div class="canva-card p-4 border-l-4 border-l-terracotta">
+              <span class="font-mono text-[11px] font-bold text-terracotta">FASE 2 · FUNCIÓN DE PÉRDIDA</span>
+              <h3 class="font-display font-extrabold text-base text-forest">Entropía Cruzada Categórica</h3>
+              <p class="text-xs text-slate-600 mt-1">
+                Compara la distribución de probabilidad predicha contra las etiquetas reales en formato <strong>One-Hot Encoding</strong>.
+              </p>
+            </div>
+
+            <div class="canva-card p-4 border-l-4 border-l-lavenderNode">
+              <span class="font-mono text-[11px] font-bold text-lavenderNode">FASE 3 · RETROPROPAGACIÓN Y OPTIMIZACIÓN</span>
+              <h3 class="font-display font-extrabold text-base text-forest">Backpropagation + Optimizador Adam</h3>
+              <p class="text-xs text-slate-600 mt-1">
+                Calcula gradientes por regla de la cadena y actualiza pesos con tasas de aprendizaje adaptativas (combinando AdaGrad y RMSProp).
+              </p>
+            </div>
+
+            <div class="canva-card p-4 bg-forest text-cream flex items-center justify-between gap-3">
+              <div>
+                <span class="font-mono text-[10px] font-bold text-amberGold uppercase">Control de Sobreajuste</span>
+                <p class="text-xs text-emerald-100 mt-0.5">
+                  <strong>Early Stopping</strong> (monitoreo de validación) + <strong>Dropout (0.2)</strong> condicional.
+                </p>
+              </div>
+              <span class="px-3 py-1 rounded-xl bg-amberGold text-forest font-mono text-xs font-extrabold shrink-0">Patience</span>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Gráfica SVG de Curvas de Entrenamiento y Validación -->
+          <div class="col-span-6 canva-card p-5 flex flex-col justify-between bg-white">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-display font-extrabold text-base text-forest">Curvas de Aprendizaje (Loss &amp; Accuracy)</h3>
+              <span class="px-2.5 py-1 rounded-lg bg-emeraldLeaf/15 text-emeraldLeaf font-mono text-[11px] font-bold">Early Stopping Activo</span>
+            </div>
+
+            <svg viewBox="0 0 540 330" class="w-full h-auto">
+              <!-- Fondo y ejes -->
+              <rect x="55" y="20" width="450" height="250" rx="12" fill="#F9F6F0" />
+              <g stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4">
+                <line x1="55" y1="70" x2="505" y2="70" />
+                <line x1="55" y1="120" x2="505" y2="120" />
+                <line x1="55" y1="170" x2="505" y2="170" />
+                <line x1="55" y1="220" x2="505" y2="220" />
+              </g>
+
+              <!-- Curva Accuracy Train (Verde) -->
+              <path d="M 65 230 Q 150 110, 260 68 T 485 42" fill="none" stroke="#2E6F40" stroke-width="3.5" stroke-linecap="round" />
+              <!-- Curva Accuracy Val (Verde punteado) -->
+              <path d="M 65 238 Q 155 120, 260 76 T 485 52" fill="none" stroke="#1A3C2B" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round" />
+
+              <!-- Curva Loss Train (Terracota) -->
+              <path d="M 65 45 Q 160 155, 260 205 T 485 245" fill="none" stroke="#E05A47" stroke-width="3.5" stroke-linecap="round" />
+              <!-- Curva Loss Val (Ámbar) -->
+              <path d="M 65 52 Q 160 162, 260 212 T 410 232 L 485 236" fill="none" stroke="#E69F24" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round" />
+
+              <!-- Línea Vertical Early Stopping -->
+              <line x1="410" y1="20" x2="410" y2="270" stroke="#7C5DFA" stroke-width="2.5" stroke-dasharray="5 5" />
+              <rect x="335" y="28" width="150" height="24" rx="8" fill="#7C5DFA" />
+              <text x="410" y="44" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="10.5" font-weight="800" fill="#FFFFFF">Mejor Modelo (Época 42)</text>
+
+              <!-- Etiquetas Ejes -->
+              <text x="280" y="302" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="11" font-weight="700" fill="#1A3C2B">Épocas de Entrenamiento</text>
+              <text x="22" y="145" text-anchor="middle" transform="rotate(-90 22 145)" font-family="Plus Jakarta Sans" font-size="11" font-weight="700" fill="#1A3C2B">Exactitud / Pérdida</text>
+            </svg>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[11px] font-display font-bold">
+              <div class="flex items-center gap-2 text-emeraldLeaf"><span class="w-4 h-1 bg-emeraldLeaf rounded"></span> Exactitud Entrenamiento / Validación</div>
+              <div class="flex items-center gap-2 text-terracotta"><span class="w-4 h-1 bg-terracotta rounded"></span> Pérdida Cross-Entropy (Train / Val)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 10: MÉTRICAS Y ESTRATEGIAS DE VALIDACIÓN (7:35 - 8:25)
+           ===================================================================== -->
+      <section class="slide bg-cream" data-slide="9">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs uppercase tracking-wider">
+              09 · Evaluación y Confiabilidad
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Métricas Multiclase y <span class="italic text-emeraldLeaf">Validación Sin Fuga</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-400">7:35 – 8:25</span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 flex-1 items-stretch">
+          <!-- Columna Izquierda: Técnicas de Validación y Criterios de Efectividad -->
+          <div class="col-span-7 flex flex-col justify-between gap-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="canva-card p-5 border-t-4 border-t-emeraldLeaf">
+                <span class="font-mono text-xs font-bold text-emeraldLeaf">MÉTODO PRINCIPAL</span>
+                <h3 class="font-display font-extrabold text-lg text-forest mt-1">Hold-Out 70 / 15 / 15</h3>
+                <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                  Partición estratificada: <strong>70% Entrenamiento</strong>, <strong>15% Validación</strong> (ajuste y early stopping) y <strong>15% Prueba ciega</strong>.
+                </p>
+              </div>
+              <div class="canva-card p-5 border-t-4 border-t-lavenderNode">
+                <span class="font-mono text-xs font-bold text-lavenderNode">MÉTODO COMPLEMENTARIO</span>
+                <h3 class="font-display font-extrabold text-lg text-forest mt-1">Stratified K-Fold (K = 5)</h3>
+                <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                  Evalúa estabilidad en 5 pliegues agrupando variantes del mismo alimento para prevenir <strong>Data Leakage</strong>.
+                </p>
+              </div>
+            </div>
+
+            <!-- 3 Criterios de Capacitación Efectiva -->
+            <div class="canva-card p-5 flex-1 flex flex-col justify-between">
+              <h3 class="font-display font-extrabold text-base text-forest">Criterios de Capacitación Efectiva</h3>
+              <div class="grid grid-cols-3 gap-3 my-2">
+                <div class="p-3.5 rounded-2xl bg-sage text-center">
+                  <span class="font-serif text-2xl font-extrabold text-forest">&gt; 33.3%</span>
+                  <p class="text-[11px] font-display font-bold text-emeraldLeaf mt-1">Supera Línea Base</p>
+                  <p class="text-[10px] text-slate-600 mt-0.5">Muy por encima del azar multiclase</p>
+                </div>
+                <div class="p-3.5 rounded-2xl bg-sage text-center">
+                  <span class="font-serif text-2xl font-extrabold text-emeraldLeaf">F1 &gt; 0.85</span>
+                  <p class="text-[11px] font-display font-bold text-forest mt-1">Balance por Clase</p>
+                  <p class="text-[10px] text-slate-600 mt-0.5">Evita falsos positivos de salud</p>
+                </div>
+                <div class="p-3.5 rounded-2xl bg-sage text-center">
+                  <span class="font-serif text-2xl font-extrabold text-amber-700">&lt; 5%</span>
+                  <p class="text-[11px] font-display font-bold text-forest mt-1">Brecha Train-Test</p>
+                  <p class="text-[10px] text-slate-600 mt-0.5">Alta capacidad de generalización</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-600">
+                <strong>Relevancia sanitaria:</strong> Monitoreamos <em>Precision</em> y <em>Recall</em> por clase porque clasificar un ultraprocesado como “Saludable” afecta directamente al usuario.
+              </p>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Matriz de Confusión Objetivo -->
+          <div class="col-span-5 canva-card p-5 flex flex-col justify-between bg-white">
+            <div>
+              <span class="font-mono text-xs font-bold text-emeraldLeaf">EVALUACIÓN MULTICLASE</span>
+              <h3 class="font-display font-extrabold text-lg text-forest">Matriz de Confusión (Objetivo Prueba)</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Concentración diagonal confirma baja confusión entre categorías extremas.</p>
+            </div>
+
+            <div class="my-auto">
+              <div class="grid grid-cols-4 gap-2 text-center text-xs font-display">
+                <div></div>
+                <div class="font-bold text-emeraldLeaf py-1">Pred. Sal.</div>
+                <div class="font-bold text-amber-700 py-1">Pred. Mod.</div>
+                <div class="font-bold text-terracotta py-1">Pred. Poco</div>
+
+                <div class="font-bold text-forest flex items-center justify-end pr-2">Real Sal.</div>
+                <div class="p-4 rounded-2xl bg-emeraldLeaf text-white font-mono font-extrabold text-base shadow">91%</div>
+                <div class="p-4 rounded-2xl bg-sage text-slate-600 font-mono font-bold">7%</div>
+                <div class="p-4 rounded-2xl bg-cream text-slate-400 font-mono">2%</div>
+
+                <div class="font-bold text-forest flex items-center justify-end pr-2">Real Mod.</div>
+                <div class="p-4 rounded-2xl bg-sage text-slate-600 font-mono font-bold">6%</div>
+                <div class="p-4 rounded-2xl bg-amberGold text-forest font-mono font-extrabold text-base shadow">87%</div>
+                <div class="p-4 rounded-2xl bg-sage text-slate-600 font-mono font-bold">7%</div>
+
+                <div class="font-bold text-forest flex items-center justify-end pr-2">Real Poco</div>
+                <div class="p-4 rounded-2xl bg-cream text-slate-400 font-mono">1%</div>
+                <div class="p-4 rounded-2xl bg-sage text-slate-600 font-mono font-bold">6%</div>
+                <div class="p-4 rounded-2xl bg-terracotta text-white font-mono font-extrabold text-base shadow">93%</div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-cream text-[11px] text-slate-600 text-center font-medium">
+              Métricas monitoreadas: <strong>Accuracy · Precision · Recall · F1-Score · Matriz de Confusión</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 11: STACK TECNOLÓGICO E INTERFAZ WEB (DEMO EN VIVO) (8:25 - 9:25)
+           ===================================================================== -->
+      <section class="slide bg-sage" data-slide="10">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-forest text-cream font-display font-bold text-xs uppercase tracking-wider">
+              10 · Implementación Web y Demo Interactiva
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold text-forest mt-1.5">
+              Stack Tecnológico e <span class="italic text-emeraldLeaf">Inferencia en Vivo</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-slate-500">8:25 – 9:25</span>
+        </div>
+
+        <!-- Stack Tecnológico Pills -->
+        <div class="grid grid-cols-4 gap-3 mb-5">
+          <div class="canva-card px-4 py-3 flex items-center justify-between">
+            <span class="font-display font-extrabold text-xs text-forest">Frontend</span>
+            <span class="font-mono text-[11px] text-emeraldLeaf font-bold">React · Vite · Tailwind</span>
+          </div>
+          <div class="canva-card px-4 py-3 flex items-center justify-between">
+            <span class="font-display font-extrabold text-xs text-forest">Backend</span>
+            <span class="font-mono text-[11px] text-amber-700 font-bold">Python FastAPI / Flask</span>
+          </div>
+          <div class="canva-card px-4 py-3 flex items-center justify-between">
+            <span class="font-display font-extrabold text-xs text-forest">Módulo IA</span>
+            <span class="font-mono text-[11px] text-lavenderNode font-bold">TensorFlow · Scikit-Learn</span>
+          </div>
+          <div class="canva-card px-4 py-3 flex items-center justify-between">
+            <span class="font-display font-extrabold text-xs text-forest">Base Datos</span>
+            <span class="font-mono text-[11px] text-slate-600 font-bold">PostgreSQL / MySQL</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 flex-1 items-stretch">
+          <!-- Imagen del Dashboard Web en Laptop -->
+          <div class="col-span-6 canva-card p-3 flex flex-col">
+            <div class="photo-box relative flex-1 rounded-2xl">
+              <img
+                src="watermarked_img_1014011011481467546.jpg"
+                data-fallback="dashboard"
+                alt="Aplicación Web NutriIA MLP en laptop"
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-forest/90 text-cream font-mono text-[11px] font-bold">
+                Prototipo Web Funcional
+              </div>
+            </div>
+          </div>
+
+          <!-- Mini-Widget Interactivo MLP para la Exposición -->
+          <div class="col-span-6 canva-card p-6 flex flex-col justify-between bg-white border-2 border-emeraldLeaf/30">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-display font-extrabold text-sm text-forest">⚡ Mini-Simulador MLP en Vivo</span>
+                <span class="text-[11px] font-mono text-slate-400">Haz clic para probar</span>
+              </div>
+
+              <!-- Botones de prueba rápida -->
+              <div class="grid grid-cols-3 gap-2.5 mb-4">
+                <button type="button" data-demo="manzana" class="demo-btn py-2.5 px-3 rounded-xl bg-forest text-cream font-display font-bold text-xs shadow transition">
+                  🍎 Manzana
+                </button>
+                <button type="button" data-demo="yogur" class="demo-btn py-2.5 px-3 rounded-xl bg-sage text-forest hover:bg-emeraldLeaf/20 font-display font-bold text-xs transition">
+                  🥛 Yogur Natural
+                </button>
+                <button type="button" data-demo="papas" class="demo-btn py-2.5 px-3 rounded-xl bg-sage text-forest hover:bg-emeraldLeaf/20 font-display font-bold text-xs transition">
+                  🍟 Papas Fritas
+                </button>
+              </div>
+
+              <!-- Datos del alimento seleccionado -->
+              <div id="demo-stats" class="grid grid-cols-4 gap-2 p-3 rounded-xl bg-cream text-center font-mono text-xs mb-4">
+                <div><span class="block text-[10px] text-slate-400">Calorías</span><strong class="text-forest">52 kcal</strong></div>
+                <div><span class="block text-[10px] text-slate-400">Azúcar</span><strong class="text-forest">10.4 g</strong></div>
+                <div><span class="block text-[10px] text-slate-400">Sodio</span><strong class="text-forest">1 mg</strong></div>
+                <div><span class="block text-[10px] text-slate-400">Fibra</span><strong class="text-forest">2.4 g</strong></div>
+              </div>
+
+              <!-- Barras de Probabilidad Softmax -->
+              <div class="space-y-2.5">
+                <div>
+                  <div class="flex justify-between text-xs font-display font-bold mb-1">
+                    <span class="text-emeraldLeaf">Saludable</span>
+                    <span id="demo-p0" class="font-mono">94.8%</span>
+                  </div>
+                  <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="demo-b0" class="h-full bg-emeraldLeaf rounded-full transition-all duration-500" style="width: 94.8%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs font-display font-bold mb-1">
+                    <span class="text-amber-600">Moderado</span>
+                    <span id="demo-p1" class="font-mono">4.3%</span>
+                  </div>
+                  <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="demo-b1" class="h-full bg-amberGold rounded-full transition-all duration-500" style="width: 4.3%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs font-display font-bold mb-1">
+                    <span class="text-terracotta">Poco Saludable</span>
+                    <span id="demo-p2" class="font-mono">0.9%</span>
+                  </div>
+                  <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="demo-b2" class="h-full bg-terracotta rounded-full transition-all duration-500" style="width: 0.9%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="demo-verdict" class="mt-3 p-3 rounded-xl bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs text-center">
+              Resultado Softmax: SALUDABLE (Opción favorable para consumo habitual)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           DIAPOSITIVA 12: CONCLUSIONES, ÉTICA Y REFERENCIAS (9:25 - 10:00)
+           ===================================================================== -->
+      <section class="slide bg-forest text-cream" data-slide="11">
+        <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-emeraldLeaf/20 canva-blob-1 pointer-events-none"></div>
+
+        <div class="flex items-center justify-between mb-4 relative z-10">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-amberGold text-forest font-display font-bold text-xs uppercase tracking-wider">
+              11 · Cierre del Proyecto
+            </span>
+            <h2 class="font-serif text-4xl font-extrabold mt-1.5">
+              Conclusiones, Ética y <span class="italic text-emerald-300">Referencias</span>
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-emerald-300">9:25 – 10:00</span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 flex-1 items-center relative z-10">
+          <!-- Columna Izquierda: 4 Pilares + Cita Final -->
+          <div class="col-span-8 flex flex-col justify-between h-full gap-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                <span class="font-mono text-xs font-bold text-amberGold">01 · PRECISIÓN</span>
+                <h3 class="font-display font-extrabold text-base mt-1">Análisis Integral</h3>
+                <p class="text-xs text-emerald-100 mt-1 leading-relaxed">
+                  La MLP evalúa 8 nutrientes simultáneamente, superando la lectura aislada de calorías.
+                </p>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                <span class="font-mono text-xs font-bold text-amberGold">02 · ARQUITECTURA</span>
+                <h3 class="font-display font-extrabold text-base mt-1">Dos Procesos</h3>
+                <p class="text-xs text-emerald-100 mt-1 leading-relaxed">
+                  Combina cálculo matemático exacto por porción con inferencia neuronal en tiempo real.
+                </p>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                <span class="font-mono text-xs font-bold text-amberGold">03 · ÉTICA Y DATOS</span>
+                <h3 class="font-display font-extrabold text-base mt-1">Uso Responsable</h3>
+                <p class="text-xs text-emerald-100 mt-1 leading-relaxed">
+                  Datos auditados sin fuga de información; orienta decisiones sin emitir diagnósticos médicos.
+                </p>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                <span class="font-mono text-xs font-bold text-amberGold">04 · IMPACTO SOCIAL</span>
+                <h3 class="font-display font-extrabold text-base mt-1">Hábitos Saludables</h3>
+                <p class="text-xs text-emerald-100 mt-1 leading-relaxed">
+                  Aplicación práctica de la IA frente al sobrepeso y obesidad juvenil en México.
+                </p>
+              </div>
+            </div>
+
+            <!-- Cita Final en Fraunces Itálica -->
+            <div class="text-center py-5 px-6 rounded-3xl bg-emeraldLeaf/35 border border-emerald-400/25">
+              <p class="font-serif italic text-3xl font-bold text-cream">
+                “Pequeñas decisiones, grandes cambios en la salud.”
+              </p>
+              <p class="font-display font-bold text-sm text-amberGold mt-2">
+                ¡Muchas gracias por su atención! · Abrimos espacio para preguntas y demostración web
+              </p>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Arco Orgánico de Cierre con Doble Fotografía -->
+          <div class="col-span-4 h-full flex items-center justify-center">
+            <div class="relative w-full h-[435px] p-2.5 bg-white/10 backdrop-blur canva-arch border border-white/20">
+              <div class="photo-box w-full h-full canva-arch">
+                <img
+                  src="watermarked_img_1250628612014948629.jpg"
+                  data-fallback="healthy"
+                  alt="Alimentación saludable"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="photo-box absolute -bottom-3 -left-4 w-28 h-28 rounded-2xl border-4 border-forest shadow-xl">
+                <img
+                  src="watermarked_img_10181786268219419784.jpg"
+                  data-fallback="bowl"
+                  alt="Bowl nutritivo"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Referencias y Créditos -->
+        <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-[11px] text-emerald-200 relative z-10">
+          <div>
+            <strong>Referencias:</strong> USDA FoodData Central · Open Food Facts · DOF NOM-051-SCFI/SSA1 · Scikit-Learn MLP · TensorFlow/Keras
+          </div>
+          <div class="font-display font-bold text-white">
+            Andrea Portillo (2001785) &amp; Leslie Flores (1981791) · UANL FIME 2026
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       BARRA FLOTANTE INFERIOR ESTILO CANVA + TEMPORIZADOR 10 MIN
+       ========================================================================= -->
+  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-white/15 flex items-center gap-3 sm:gap-4">
+    <!-- Anterior / Siguiente -->
+    <div class="flex items-center gap-1">
+      <button id="btn-prev" title="Anterior (Flecha Izquierda)" class="p-2 rounded-xl hover:bg-white/10 text-slate-200 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <span id="slide-counter" class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-white/10 min-w-[64px] text-center">
+        1 / 12
+      </span>
+      <button id="btn-next" title="Siguiente (Flecha Derecha / Espacio)" class="p-2 rounded-xl hover:bg-white/10 text-slate-200 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="h-5 w-px bg-white/15"></div>
+
+    <!-- Temporizador 10 Minutos -->
+    <div class="flex items-center gap-2 bg-forest/90 border border-emerald-500/30 px-3 py-1.5 rounded-xl">
+      <span class="w-2 h-2 rounded-full bg-amberGold animate-pulse"></span>
+      <span id="timer-display" class="font-mono text-xs font-bold text-amberGold">10:00</span>
+      <button id="btn-timer-toggle" class="text-[11px] font-display font-bold px-2 py-0.5 rounded bg-emeraldLeaf hover:bg-emerald-600 text-white transition">
+        Iniciar
+      </button>
+      <button id="btn-timer-reset" title="Reiniciar 10:00" class="text-[11px] text-slate-300 hover:text-white px-1">
+        ↺
+      </button>
+    </div>
+
+    <div class="h-5 w-px bg-white/15 hidden sm:block"></div>
+
+    <!-- Botón Guía 10 min & Notas del Expositor -->
+    <button id="btn-notes" title="Guía 10 min y Notas (Tecla N)" class="px-3 py-1.5 rounded-xl bg-amberGold/20 hover:bg-amberGold/30 text-amberGold font-display font-bold text-xs flex items-center gap-1.5 transition">
+      <span>📝</span>
+      <span class="hidden md:inline">Guía 10 min &amp; Notas</span>
+    </button>
+
+    <!-- Botón Vista de Cuadrícula -->
+    <button id="btn-grid" title="Vista de Cuadrícula (Tecla G)" class="p-2 rounded-xl hover:bg-white/10 text-slate-200 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      </svg>
+    </button>
+
+    <!-- Botón Pantalla Completa -->
+    <button id="btn-fullscreen" title="Pantalla Completa (Tecla F)" class="p-2 rounded-xl hover:bg-white/10 text-slate-200 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       CAJÓN DESPLEGABLE: GUÍA DE 10 MINUTOS Y NOTAS DEL EXPOSITOR
+       ========================================================================= -->
+  <div id="notes-drawer" class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[92vw] max-w-4xl bg-slate-900/95 backdrop-blur-xl text-white rounded-2xl p-5 shadow-2xl border border-emerald-500/30">
+    <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
+      <div class="flex items-center gap-3">
+        <span class="px-2.5 py-1 rounded-lg bg-amberGold text-forest font-display font-extrabold text-xs">GUÍA DEL EXPOSITOR (10 MIN)</span>
+        <span id="note-timing" class="font-mono text-xs text-emerald-300 font-bold">Tiempo sugerido: 0:00 – 0:45 (45 seg)</span>
+      </div>
+      <button id="btn-close-notes" class="text-slate-400 hover:text-white text-sm font-bold px-2">✕</button>
+    </div>
+    <p id="note-script" class="text-sm text-slate-200 leading-relaxed"></p>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: VISTA DE CUADRÍCULA DE DIAPOSITIVAS (CANVA GRID VIEW)
+       ========================================================================= -->
+  <div id="grid-modal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md p-6 sm:p-10 overflow-y-auto">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center justify-between mb-6 text-white">
+        <div>
+          <h3 class="font-serif text-2xl font-bold">Vista de Cuadrícula — 12 Diapositivas (Exposición 10 min)</h3>
+          <p class="text-xs text-slate-400">Haz clic en cualquier diapositiva para saltar directamente a ella.</p>
+        </div>
+        <button id="btn-close-grid" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-bold">
+          Cerrar ✕
+        </button>
+      </div>
+      <div id="grid-cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Generado dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       SCRIPT INTERACTIVO DE LA PRESENTACIÓN
+       ========================================================================= -->
+  <script>
+    // Respaldo visual SVG editorial si un archivo local no estuviera accesible en cierto entorno
+    const FALLBACK_ART = {
+      healthy: `<svg viewBox="0 0 400 500" class="w-full h-full"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2E6F40"/><stop offset="100%" stop-color="#1A3C2B"/></linearGradient></defs><rect width="400" height="500" fill="url(#g1)"/><circle cx="200" cy="210" r="110" fill="#F9F6F0" opacity="0.14"/><circle cx="175" cy="195" r="48" fill="#E05A47"/><circle cx="235" cy="225" r="42" fill="#E69F24"/><path d="M160 145 Q195 120 215 150 Q180 165 160 145Z" fill="#86EFAC"/><text x="200" y="385" text-anchor="middle" fill="#F9F6F0" font-family="Plus Jakarta Sans" font-weight="800" font-size="18">Alimentación Saludable</text><text x="200" y="410" text-anchor="middle" fill="#86EFAC" font-family="DM Sans" font-size="13">NutriIA MLP • UANL FIME</text></svg>`,
+      label: `<svg viewBox="0 0 400 500" class="w-full h-full"><rect width="400" height="500" fill="#1A3C2B"/><rect x="75" y="70" width="250" height="310" rx="18" fill="#F9F6F0"/><rect x="95" y="95" width="210" height="28" rx="6" fill="#1A3C2B"/><text x="200" y="114" text-anchor="middle" fill="#F9F6F0" font-family="Plus Jakarta Sans" font-weight="800" font-size="12">INFORMACIÓN NUTRIMENTAL</text><line x1="95" y1="145" x2="305" y2="145" stroke="#1A3C2B" stroke-width="2"/><line x1="95" y1="175" x2="305" y2="175" stroke="#cbd5e1" stroke-width="2"/><line x1="95" y1="205" x2="305" y2="205" stroke="#cbd5e1" stroke-width="2"/><line x1="95" y1="235" x2="305" y2="235" stroke="#cbd5e1" stroke-width="2"/><polygon points="150,265 180,265 198,283 198,313 180,331 150,331 132,313 132,283" fill="#0f172a"/><text x="165" y="302" text-anchor="middle" fill="#FFF" font-family="Plus Jakarta Sans" font-weight="800" font-size="8">EXCESO</text><polygon points="220,265 250,265 268,283 268,313 250,331 220,331 202,313 202,283" fill="#0f172a"/><text x="235" y="302" text-anchor="middle" fill="#FFF" font-family="Plus Jakarta Sans" font-weight="800" font-size="8">SODIO</text><text x="200" y="435" text-anchor="middle" fill="#F9F6F0" font-family="Plus Jakarta Sans" font-weight="700" font-size="15">Etiquetado NOM-051</text></svg>`,
+      bowl: `<svg viewBox="0 0 400 500" class="w-full h-full"><rect width="400" height="500" fill="#2E6F40"/><circle cx="200" cy="230" r="125" fill="#F9F6F0"/><circle cx="200" cy="230" r="102" fill="#EDF3EE"/><circle cx="170" cy="210" r="28" fill="#E05A47"/><circle cx="230" cy="215" r="26" fill="#E69F24"/><circle cx="200" cy="260" r="30" fill="#2E6F40"/><text x="200" y="425" text-anchor="middle" fill="#F9F6F0" font-family="Plus Jakarta Sans" font-weight="800" font-size="16">Equilibrio Nutricional OMS</text></svg>`,
+      scan: `<svg viewBox="0 0 400 300" class="w-full h-full"><rect width="400" height="300" fill="#1A3C2B"/><rect x="135" y="35" width="130" height="230" rx="22" fill="#0f172a" stroke="#86EFAC" stroke-width="3"/><rect x="155" y="80" width="90" height="75" rx="10" fill="#2E6F40"/><text x="200" y="122" text-anchor="middle" fill="#FFF" font-family="JetBrains Mono" font-weight="700" font-size="14">61 kcal</text><rect x="165" y="175" width="70" height="22" rx="11" fill="#86EFAC"/><text x="200" y="190" text-anchor="middle" fill="#1A3C2B" font-family="Plus Jakarta Sans" font-weight="800" font-size="10">SALUDABLE</text></svg>`,
+      neural: `<svg viewBox="0 0 400 500" class="w-full h-full"><rect width="400" height="500" fill="#1A3C2B"/><g stroke="#7C5DFA" stroke-width="2" opacity="0.6"><line x1="90" y1="140" x2="200" y2="110"/><line x1="90" y1="140" x2="200" y2="230"/><line x1="90" y1="260" x2="200" y2="110"/><line x1="90" y1="260" x2="200" y2="230"/><line x1="90" y1="260" x2="200" y2="350"/><line x1="200" y1="110" x2="310" y2="180"/><line x1="200" y1="230" x2="310" y2="180"/><line x1="200" y1="230" x2="310" y2="290"/><line x1="200" y1="350" x2="310" y2="290"/></g><circle cx="90" cy="140" r="14" fill="#86EFAC"/><circle cx="90" cy="260" r="14" fill="#86EFAC"/><circle cx="200" cy="110" r="16" fill="#7C5DFA"/><circle cx="200" cy="230" r="16" fill="#7C5DFA"/><circle cx="200" cy="350" r="16" fill="#7C5DFA"/><circle cx="310" cy="180" r="18" fill="#E69F24"/><circle cx="310" cy="290" r="18" fill="#E05A47"/><text x="200" y="435" text-anchor="middle" fill="#F9F6F0" font-family="Plus Jakarta Sans" font-weight="800" font-size="16">Perceptrón Multicapa (MLP)</text></svg>`,
+      dashboard: `<svg viewBox="0 0 600 400" class="w-full h-full"><rect width="600" height="400" fill="#1A3C2B"/><rect x="70" y="45" width="460" height="285" rx="16" fill="#F9F6F0"/><rect x="70" y="45" width="460" height="40" rx="12" fill="#2E6F40"/><text x="300" y="70" text-anchor="middle" fill="#FFF" font-family="Plus Jakarta Sans" font-weight="800" font-size="14">NutriIA MLP • Dashboard Web</text><rect x="95" y="105" width="190" height="195" rx="12" fill="#FFF" stroke="#cbd5e1"/><text x="190" y="150" text-anchor="middle" fill="#1A3C2B" font-family="Fraunces" font-weight="800" font-size="22">Yogur Natural</text><text x="190" y="190" text-anchor="middle" fill="#2E6F40" font-family="JetBrains Mono" font-weight="800" font-size="26">61 kcal</text><rect x="130" y="215" width="120" height="28" rx="14" fill="#2E6F40"/><text x="190" y="233" text-anchor="middle" fill="#FFF" font-family="Plus Jakarta Sans" font-weight="700" font-size="12">Saludable</text><rect x="305" y="105" width="200" height="195" rx="12" fill="#FFF" stroke="#cbd5e1"/><rect x="325" y="135" width="150" height="14" rx="7" fill="#2E6F40"/><rect x="325" y="170" width="90" height="14" rx="7" fill="#E69F24"/><rect x="325" y="205" width="45" height="14" rx="7" fill="#E05A47"/></svg>`
+    };
+
+    function attachImageFallbacks() {
+      document.querySelectorAll('img[data-fallback]').forEach(img => {
+        img.addEventListener('error', function () {
+          const key = this.getAttribute('data-fallback');
+          const parent = this.parentElement;
+          if (parent && FALLBACK_ART[key]) {
+            parent.innerHTML = FALLBACK_ART[key];
+          }
+        });
+      });
+    }
+
+    const SLIDE_NOTES = [
+      {
+        title: "1. Portada Editorial",
+        time: "0:00 – 0:45 (45 seg)",
+        script: "Buenos días profesor Dr. Tomás Salais y compañeros. Somos Andrea Portillo y Leslie Flores de Ingeniería en Administrador de Sistemas. Hoy presentamos nuestro proyecto final de Seminario de Sistemas II: 'NutriIA MLP', una herramienta web que combina una calculadora nutricional con una Red Neuronal Multicapa para clasificar alimentos en tiempo real."
+      },
+      {
+        title: "2. Contexto y Problema",
+        time: "0:45 – 1:35 (50 seg)",
+        script: "Partimos de una problemática urgente en México: según UNICEF, 1 de cada 3 niños mayores de 5 años vive con sobrepeso u obesidad, y el Atlas Mundial 2026 nos ubica en el octavo lugar global con más de 13 millones de menores afectados. Aunque existen los sellos de la NOM-051, interpretar rápidamente las 8 variables de una tabla nutrimental sigue siendo difícil para el consumidor."
+      },
+      {
+        title: "3. Objetivos y Alcance",
+        time: "1:35 – 2:20 (45 seg)",
+        script: "Nuestro objetivo general es ofrecer una página web clara y accesible que calcule calorías por porción y clasifique el perfil de salud de los alimentos mediante un Perceptrón Multicapa en tres categorías: Saludable, Moderado y Poco Saludable. Es importante recalcar nuestro alcance ético: es una guía educativa, no un diagnóstico médico."
+      },
+      {
+        title: "4. Solución Dual (2 Procesos)",
+        time: "2:20 – 3:10 (50 seg)",
+        script: "Nuestra arquitectura separa dos procesos independientes: el Proceso A es una calculadora matemática determinista que escala las calorías según los gramos reales consumidos —por ejemplo, 30 gramos de un producto de 250 kcal equivalen a 75 kcal—; y el Proceso B es la inferencia con nuestra Red Neuronal Multicapa evaluando el alimento por cada 100 gramos."
+      },
+      {
+        title: "5. Justificación de la Red MLP",
+        time: "3:10 – 4:05 (55 seg)",
+        script: "¿Por qué elegimos un Perceptrón Multicapa Feedforward? Primero, porque trabajamos con datos tabulares numéricos (8 atributos), donde una MLP supera en eficiencia a redes convolucionales o recurrentes. Segundo, porque modela relaciones no lineales: por ejemplo, cómo la fibra o la proteína modulan el impacto de las grasas o carbohidratos. Y tercero, porque su inferencia ocurre en milisegundos en la web."
+      },
+      {
+        title: "6. Arquitectura de Capas (8-16-8-3)",
+        time: "4:05 – 5:05 (60 seg)",
+        script: "La red tiene 4 capas: una capa de entrada de 8 neuronas para los nutrientes; una primera capa oculta de 16 neuronas con activación ReLU para extraer correlaciones iniciales; una segunda capa oculta de 8 neuronas ReLU que sintetiza el perfil nutricional; y una capa de salida de 3 neuronas con Softmax que entrega probabilidades que suman 100%."
+      },
+      {
+        title: "7. Fuentes y Preprocesamiento",
+        time: "5:05 – 5:55 (50 seg)",
+        script: "Integramos tres fuentes: USDA FoodData Central con más de 300 mil registros, Open Food Facts y etiquetas locales de México. Antes de entrenar, aplicamos StandardScaler (z = (x - media)/desviación) ajustado exclusivamente sobre el conjunto de entrenamiento para equilibrar escalas tan distintas como miligramos de sodio frente a gramos de grasa."
+      },
+      {
+        title: "8. Ejemplos del Dataset",
+        time: "5:55 – 6:45 (50 seg)",
+        script: "Aquí vemos ejemplos reales de nuestro dataset por 100 gramos: la manzana, la avena y el yogur natural son clasificados como Saludables. Destaca el caso del refresco: aunque solo tiene 42 kcal, la red neuronal identifica 10.6 gramos de azúcares libres sin fibra ni proteína, clasificándolo correctamente como Poco Saludable junto con las papas fritas y galletas."
+      },
+      {
+        title: "9. Entrenamiento y Control Overfitting",
+        time: "6:45 – 7:35 (50 seg)",
+        script: "El entrenamiento supervisado utiliza Forward Pass, pérdida de Entropía Cruzada Categórica y Retropropagación con el optimizador Adam por su tasa de aprendizaje adaptativa. Para evitar el sobreajuste implementamos Early Stopping monitoreando la pérdida de validación y Dropout condicional del 20%."
+      },
+      {
+        title: "10. Métricas y Validación",
+        time: "7:35 – 8:25 (50 seg)",
+        script: "Dividimos los datos con Hold-Out estratificado 70% entrenamiento, 15% validación y 15% prueba, complementado con Stratified K-Fold de 5 pliegues sin fuga de datos. Monitoreamos Precisión para evitar falsos positivos de salud, exigiendo un F1-Score superior al 80–85% en las tres clases y una brecha train-test menor al 5%."
+      },
+      {
+        title: "11. Stack Web y Demo en Vivo",
+        time: "8:25 – 9:25 (60 seg)",
+        script: "Para el despliegue proponemos React y Tailwind en el frontend, Python FastAPI/Flask en el backend y Scikit-Learn/TensorFlow para la red MLP. Aquí mismo podemos probar la inferencia en vivo: al alternar entre Manzana, Yogur Natural y Papas Fritas observamos cómo cambian las probabilidades Softmax al instante."
+      },
+      {
+        title: "12. Conclusiones y Cierre",
+        time: "9:25 – 10:00 (35 seg)",
+        script: "En conclusión, NutriIA MLP demuestra cómo una arquitectura neuronal multicapa bien validada puede traducir datos nutricionales complejos en decisiones cotidianas más conscientes. Como dice nuestro lema: 'Pequeñas decisiones, grandes cambios en la salud'. Muchas gracias, quedamos atentas a sus preguntas."
+      }
+    ];
+
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    function scaleStage() {
+      const stage = document.getElementById('slide-stage');
+      const availW = window.innerWidth - 32;
+      const availH = window.innerHeight - 92;
+      const scale = Math.min(availW / 1280, availH / 720);
+      stage.style.transform = `scale(${scale})`;
+    }
+
+    function goToSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= totalSlides) index = totalSlides - 1;
+      currentSlide = index;
+
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+
+      document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+      document.getElementById('note-timing').textContent = `Tiempo sugerido: ${SLIDE_NOTES[currentSlide].time}`;
+      document.getElementById('note-script').textContent = SLIDE_NOTES[currentSlide].script;
+    }
+
+    function initSlide6SVG() {
+      const svg = document.getElementById('slide-mlp-svg');
+      const layers = [
+        { count: 8, x: 120, color: '#1A3C2B', label: 'Entrada (8)' },
+        { count: 16, x: 320, color: '#7C5DFA', label: 'Oculta 1 (16)' },
+        { count: 8, x: 520, color: '#2E6F40', label: 'Oculta 2 (8)' },
+        { count: 3, x: 685, color: '#E69F24', label: 'Salida (3)' }
+      ];
+      const inputNames = ['Calorías', 'Azúcares', 'Grasas', 'G. Sat.', 'Sodio', 'Proteína', 'Fibra', 'Carbos'];
+      const outNames = ['Saludable', 'Moderado', 'Poco Saludable'];
+      const outColors = ['#2E6F40', '#E69F24', '#E05A47'];
+
+      const coords = layers.map(l => {
+        const step = 360 / (l.count + 1);
+        return Array.from({ length: l.count }, (_, i) => ({
+          x: l.x,
+          y: 45 + step * (i + 1)
+        }));
+      });
+
+      let html = '';
+      layers.forEach(l => {
+        html += `<text x="${l.x}" y="26" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="12" font-weight="800" fill="${l.color}">${l.label}</text>`;
+      });
+
+      for (let l = 0; l < coords.length - 1; l++) {
+        coords[l].forEach(p1 => {
+          coords[l + 1].forEach(p2 => {
+            html += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#94a3b8" stroke-width="0.65" stroke-opacity="0.28" />`;
+          });
+        });
+      }
+
+      coords[0].forEach((p, i) => {
+        html += `<text x="${p.x - 14}" y="${p.y + 4}" text-anchor="end" font-family="DM Sans" font-size="11" font-weight="700" fill="#1A3C2B">${inputNames[i]}</text>`;
+        html += `<circle cx="${p.x}" cy="${p.y}" r="8" fill="#1A3C2B" stroke="#fff" stroke-width="2" />`;
+      });
+
+      coords[1].forEach(p => {
+        html += `<circle cx="${p.x}" cy="${p.y}" r="6.5" fill="#7C5DFA" stroke="#fff" stroke-width="1.5" />`;
+      });
+
+      coords[2].forEach(p => {
+        html += `<circle cx="${p.x}" cy="${p.y}" r="8" fill="#2E6F40" stroke="#fff" stroke-width="2" />`;
+      });
+
+      coords[3].forEach((p, i) => {
+        html += `<circle cx="${p.x}" cy="${p.y}" r="12" fill="${outColors[i]}" stroke="#fff" stroke-width="2.5" />`;
+        html += `<text x="${p.x + 18}" y="${p.y + 4}" text-anchor="start" font-family="Plus Jakarta Sans" font-size="11" font-weight="800" fill="${outColors[i]}">${outNames[i]}</text>`;
+      });
+
+      svg.innerHTML = html;
+    }
+
+    const DEMO_DATA = {
+      manzana: {
+        stats: ['52 kcal', '10.4 g', '1 mg', '2.4 g'],
+        probs: [94.8, 4.3, 0.9],
+        verdict: 'Resultado Softmax: SALUDABLE (Opción favorable para consumo habitual)',
+        verdictClass: 'mt-3 p-3 rounded-xl bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs text-center'
+      },
+      yogur: {
+        stats: ['61 kcal', '4.7 g', '46 mg', '0.0 g'],
+        probs: [88.5, 9.7, 1.8],
+        verdict: 'Resultado Softmax: SALUDABLE (Buen aporte proteico y bajo en calorías)',
+        verdictClass: 'mt-3 p-3 rounded-xl bg-emeraldLeaf/15 text-emeraldLeaf font-display font-bold text-xs text-center'
+      },
+      papas: {
+        stats: ['312 kcal', '0.3 g', '500 mg', '3.1 g'],
+        probs: [2.1, 11.4, 86.5],
+        verdict: 'Resultado Softmax: POCO SALUDABLE (Exceso de sodio, calorías y grasas saturadas)',
+        verdictClass: 'mt-3 p-3 rounded-xl bg-terracotta/15 text-terracotta font-display font-bold text-xs text-center'
+      }
+    };
+
+    function setDemoFood(key) {
+      const d = DEMO_DATA[key];
+      const labels = ['Calorías', 'Azúcar', 'Sodio', 'Fibra'];
+      document.getElementById('demo-stats').innerHTML = d.stats
+        .map((val, i) => `<div><span class="block text-[10px] text-slate-400">${labels[i]}</span><strong class="text-forest">${val}</strong></div>`)
+        .join('');
+
+      d.probs.forEach((p, idx) => {
+        document.getElementById(`demo-p${idx}`).textContent = `${p.toFixed(1)}%`;
+        document.getElementById(`demo-b${idx}`).style.width = `${p.toFixed(1)}%`;
+      });
+
+      const vEl = document.getElementById('demo-verdict');
+      vEl.textContent = d.verdict;
+      vEl.className = d.verdictClass;
+
+      document.querySelectorAll('.demo-btn').forEach(btn => {
+        const active = btn.getAttribute('data-demo') === key;
+        btn.className = active
+          ? 'demo-btn py-2.5 px-3 rounded-xl bg-forest text-cream font-display font-bold text-xs shadow transition'
+          : 'demo-btn py-2.5 px-3 rounded-xl bg-sage text-forest hover:bg-emeraldLeaf/20 font-display font-bold text-xs transition';
+      });
+    }
+
+    let secondsRemaining = 600;
+    let timerInterval = null;
+
+    function updateTimerDisplay() {
+      const m = Math.floor(secondsRemaining / 60);
+      const s = secondsRemaining % 60;
+      const el = document.getElementById('timer-display');
+      el.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      if (secondsRemaining <= 60) {
+        el.className = 'font-mono text-xs font-bold text-terracotta';
+      } else {
+        el.className = 'font-mono text-xs font-bold text-amberGold';
+      }
+    }
+
+    function buildGrid() {
+      const container = document.getElementById('grid-cards');
+      container.innerHTML = SLIDE_NOTES.map((item, idx) => `
+        <button type="button" onclick="goToSlide(${idx}); document.getElementById('grid-modal').classList.add('hidden');"
+          class="text-left p-4 rounded-2xl bg-slate-900 hover:bg-forest border border-white/10 hover:border-amberGold transition space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="px-2 py-0.5 rounded bg-amberGold text-forest font-mono text-xs font-bold">#${idx + 1}</span>
+            <span class="font-mono text-[11px] text-emerald-300">${item.time.split(' ')[0]}</span>
+          </div>
+          <h4 class="font-display font-bold text-sm text-white">${item.title}</h4>
+          <p class="text-xs text-slate-400 line-clamp-2">${item.script}</p>
+        </button>
+      `).join('');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      attachImageFallbacks();
+      scaleStage();
+      window.addEventListener('resize', scaleStage);
+      initSlide6SVG();
+      buildGrid();
+      goToSlide(0);
+
+      document.getElementById('btn-prev').addEventListener('click', () => goToSlide(currentSlide - 1));
+      document.getElementById('btn-next').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          goToSlide(currentSlide + 1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          goToSlide(currentSlide - 1);
+        } else if (e.key.toLowerCase() === 'n') {
+          document.getElementById('notes-drawer').classList.toggle('hidden');
+        } else if (e.key.toLowerCase() === 'g') {
+          document.getElementById('grid-modal').classList.toggle('hidden');
+        } else if (e.key.toLowerCase() === 'f') {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            document.exitFullscreen().catch(() => {});
+          }
+        } else if (e.key === 'Escape') {
+          document.getElementById('notes-drawer').classList.add('hidden');
+          document.getElementById('grid-modal').classList.add('hidden');
+        }
+      });
+
+      document.getElementById('btn-notes').addEventListener('click', () => {
+        document.getElementById('notes-drawer').classList.toggle('hidden');
+      });
+      document.getElementById('btn-close-notes').addEventListener('click', () => {
+        document.getElementById('notes-drawer').classList.add('hidden');
+      });
+      document.getElementById('btn-grid').addEventListener('click', () => {
+        document.getElementById('grid-modal').classList.toggle('hidden');
+      });
+      document.getElementById('btn-close-grid').addEventListener('click', () => {
+        document.getElementById('grid-modal').classList.add('hidden');
+      });
+
+      document.getElementById('btn-fullscreen').addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      });
+
+      const toggleBtn = document.getElementById('btn-timer-toggle');
+      toggleBtn.addEventListener('click', () => {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          toggleBtn.textContent = 'Reanudar';
+        } else {
+          toggleBtn.textContent = 'Pausar';
+          timerInterval = setInterval(() => {
+            if (secondsRemaining > 0) {
+              secondsRemaining--;
+              updateTimerDisplay();
+            } else {
+              clearInterval(timerInterval);
+              timerInterval = null;
+              toggleBtn.textContent = 'Fin';
+            }
+          }, 1000);
+        }
+      });
+
+      document.getElementById('btn-timer-reset').addEventListener('click', () => {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        secondsRemaining = 600;
+        updateTimerDisplay();
+        toggleBtn.textContent = 'Iniciar';
+      });
+
+      document.querySelectorAll('.demo-btn').forEach(btn => {
+        btn.addEventListener('click', () => setDemoFood(btn.getAttribute('data-demo')));
+      });
+
+      document.querySelectorAll('.layer-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.layer-card').forEach(c => c.classList.remove('ring-2', 'ring-emeraldLeaf'));
+          card.classList.add('ring-2', 'ring-emeraldLeaf');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
