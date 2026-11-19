@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriIA MLP — Clasificación Nutricional con Red Neuronal Multicapa | UANL FIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f4f7f4',
+              100: '#e3ede4',
+              200: '#c7dcc9',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #f4f7f4;
+      color: #1e293b;
+    }
+    .octagon-seal {
+      clip-path: polygon(29% 0%, 71% 0%, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0% 71%, 0% 29%);
+    }
+    @keyframes pulseFlow {
+      0%, 100% { stroke-opacity: 0.25; }
+      50% { stroke-opacity: 0.85; }
+    }
+    .synapse-active {
+      animation: pulseFlow 2.2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-brand-700 selection:text-white">
+
+  <!-- Barra de Navegación -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo e Identidad -->
+        <a href="#inicio" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-brand-700 text-white flex items-center justify-center shadow-md group-hover:bg-brand-800 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+          <div>
+            <span class="font-extrabold text-lg tracking-tight text-slate-900">NutriIA <span class="text-brand-700">MLP</span></span>
+            <span class="hidden sm:block text-[11px] font-medium text-slate-500 -mt-1">UANL · FIME · Seminario de Sistemas II</span>
+          </div>
+        </a>
+
+        <!-- Navegación Desktop -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="#clasificador" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-brand-700 hover:bg-brand-50 transition">Clasificador &amp; Calculadora</a>
+          <a href="#catalogo" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-brand-700 hover:bg-brand-50 transition">Catálogo de Alimentos</a>
+          <a href="#arquitectura" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-brand-700 hover:bg-brand-50 transition">Arquitectura MLP</a>
+          <a href="#proyecto" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-brand-700 hover:bg-brand-50 transition">Sobre el Proyecto</a>
+        </nav>
+
+        <!-- Botón Móvil -->
+        <button id="mobile-menu-btn" aria-label="Abrir menú" class="md:hidden p-2.5 rounded-xl text-slate-700 hover:bg-brand-50 focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menú Desplegable Móvil -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-emerald-100 px-4 pt-2 pb-4 space-y-1 shadow-lg">
+      <a href="#clasificador" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700">Clasificador &amp; Calculadora</a>
+      <a href="#catalogo" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700">Catálogo de Alimentos</a>
+      <a href="#arquitectura" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700">Arquitectura MLP</a>
+      <a href="#proyecto" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700">Sobre el Proyecto</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="inicio" class="relative overflow-hidden bg-gradient-to-br from-white via-[#f4f7f4] to-emerald-100/70 border-b border-emerald-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-5">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/90 text-brand-800 text-xs font-bold tracking-wide uppercase">
+            <span class="w-2 h-2 rounded-full bg-brand-700 animate-pulse"></span>
+            Red Neuronal Feedforward · Perceptrón Multicapa (8 → 16 → 8 → 3)
+          </div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            NutriIA MLP — <span class="text-brand-700">Clasificación Nutricional Inteligente</span>
+          </h1>
+          <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+            Calculadora de calorías por porción y evaluación nutricional en tiempo real mediante un <strong>Perceptrón Multicapa (MLP)</strong> entrenado con atributos nutricionales estandarizados.
+          </p>
+          <blockquote class="border-l-4 border-brand-700 pl-4 py-1 bg-white/80 rounded-r-xl text-sm sm:text-base italic text-slate-700 shadow-sm">
+            “Comer bien también es un acto de amor propio. Pequeñas decisiones, grandes cambios en la salud.”
+          </blockquote>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <a href="#clasificador" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-brand-700 text-white font-semibold text-sm shadow-md hover:bg-brand-800 transition">
+              Probar Clasificador IA
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+            <a href="#arquitectura" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-slate-800 border border-slate-200 font-semibold text-sm hover:bg-brand-50 hover:border-brand-200 transition">
+              Explorar Red Neuronal
+            </a>
+          </div>
+        </div>
+
+        <!-- Tarjeta Resumen de los Dos Procesos -->
+        <div class="lg:col-span-5">
+          <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-emerald-950/5 border border-emerald-100 space-y-5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-brand-700">Arquitectura Dual del Sistema</span>
+              <span class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-800 text-xs font-semibold">Inferencia en Tiempo Real</span>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#f4f7f4] border border-emerald-100 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-white text-brand-700 flex items-center justify-center font-bold shadow-sm shrink-0">01</div>
+              <div>
+                <h2 class="font-bold text-slate-900 text-sm">Calculadora Matemática de Calorías</h2>
+                <p class="text-xs text-slate-600 mt-1">Proceso determinista independiente que escala la energía y macronutrientes según los gramos o mililitros reales consumidos.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#f4f7f4] border border-emerald-100 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-brand-700 text-white flex items-center justify-center font-bold shadow-sm shrink-0">02</div>
+              <div>
+                <h2 class="font-bold text-slate-900 text-sm">Clasificación Multiclase con MLP</h2>
+                <p class="text-xs text-slate-600 mt-1">Analiza 8 variables por 100 g con <strong>StandardScaler</strong>, capas ocultas <strong>ReLU (16 y 8)</strong> y salida <strong>Softmax (3 clases)</strong>.</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 pt-1 text-center">
+              <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                <span class="block w-2.5 h-2.5 rounded-full bg-brand-700 mx-auto mb-1"></span>
+                <span class="text-xs font-bold text-brand-800">Saludable</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
+                <span class="block w-2.5 h-2.5 rounded-full bg-amber-600 mx-auto mb-1"></span>
+                <span class="text-xs font-bold text-amber-800">Moderado</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-red-50 border border-red-200">
+                <span class="block w-2.5 h-2.5 rounded-full bg-red-600 mx-auto mb-1"></span>
+                <span class="text-xs font-bold text-red-800">Poco Saludable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Módulo Principal: Calculadora de Calorías + Clasificador MLP -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+    <section id="clasificador" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-700">Módulo Interactivo Principal</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Calculadora de Calorías &amp; Clasificador MLP</h2>
+          <p class="text-sm text-slate-600 mt-1">Ingresa los valores nutricionales por cada 100 g/ml o selecciona un alimento del dataset del proyecto.</p>
+        </div>
+        <button id="btn-reset" type="button" class="self-start md:self-auto px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-sm">
+          Restablecer valores
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Columna Izquierda: Formulario de Entrada -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-slate-200/50 border border-emerald-100 space-y-6">
+          
+          <!-- Selector Rápido de Alimentos Precargados -->
+          <div class="bg-[#f4f7f4] p-4 rounded-2xl border border-emerald-100">
+            <label for="preset-select" class="block text-xs font-bold uppercase tracking-wider text-brand-800 mb-2">
+              1. Cargar alimento de prueba del dataset (valores por 100 g/ml)
+            </label>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <select id="preset-select" class="w-full rounded-xl border border-emerald-200 bg-white px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-700">
+                <option value="custom">-- Personalizado (Ingresa tus propios datos) --</option>
+                <option value="Manzana" selected>🍎 Manzana fresca (52 kcal / 100g)</option>
+                <option value="Avena">🌾 Avena en hojuelas (389 kcal / 100g)</option>
+                <option value="Yogur natural">🥛 Yogur natural sin azúcar (61 kcal / 100g)</option>
+                <option value="Aguacate">🥑 Aguacate Hass (160 kcal / 100g)</option>
+                <option value="Pechuga de pollo">🍗 Pechuga de pollo asada (165 kcal / 100g)</option>
+                <option value="Pan integral">🍞 Pan de caja integral (247 kcal / 100g)</option>
+                <option value="Jugo industrializado">🧃 Jugo de fruta industrializado (48 kcal / 100ml)</option>
+                <option value="Refresco">🥤 Refresco de cola regular (42 kcal / 100ml)</option>
+                <option value="Papas fritas">🍟 Papas fritas comerciales (312 kcal / 100g)</option>
+                <option value="Galletas">🍪 Galletas dulces rellenas (480 kcal / 100g)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tamaño de la Porción Consumida -->
+          <div class="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/40">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <label for="input-portion" class="text-sm font-bold text-slate-900">
+                2. Tamaño de la porción consumida (g o ml)
+              </label>
+              <div class="flex gap-1.5">
+                <button type="button" data-portion="30" class="portion-chip px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-xs font-semibold text-slate-700 hover:bg-brand-700 hover:text-white transition">30 g</button>
+                <button type="button" data-portion="100" class="portion-chip px-2.5 py-1 rounded-lg bg-brand-700 border border-brand-700 text-xs font-semibold text-white transition">100 g</button>
+                <button type="button" data-portion="250" class="portion-chip px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-xs font-semibold text-slate-700 hover:bg-brand-700 hover:text-white transition">250 g/ml</button>
+              </div>
+            </div>
+            <input id="input-portion" type="number" min="1" max="5000" step="1" value="100"
+              class="w-full rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-base font-bold text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+            <p class="text-[11px] text-slate-500 mt-1.5">
+              Fórmula independiente: <code class="bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-700">Calorías = (kcal por 100g × gramos) ÷ 100</code>
+            </p>
+          </div>
+
+          <!-- Los 8 Atributos de Entrada de la Red Neuronal Multicapa -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-slate-900">3. Vector de Entrada MLP (8 atributos por cada 100 g/ml)</h3>
+              <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">Capa de Entrada: 8 Neuronas</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- 1. Calorías -->
+              <div>
+                <label for="in-calorias" class="block text-xs font-semibold text-slate-700 mb-1">1. Energía / Calorías (kcal)</label>
+                <input id="in-calorias" type="number" min="0" max="1000" step="0.1" value="52"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+
+              <!-- 2. Azúcares -->
+              <div>
+                <label for="in-azucares" class="block text-xs font-semibold text-slate-700 mb-1">2. Azúcares totales (g)</label>
+                <input id="in-azucares" type="number" min="0" max="100" step="0.1" value="10.4"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+
+              <!-- 3. Grasas totales -->
+              <div>
+                <label for="in-grasas" class="block text-xs font-semibold text-slate-700 mb-1">3. Grasas totales (g)</label>
+                <input id="in-grasas" type="number" min="0" max="100" step="0.1" value="0.2"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+
+              <!-- 4. Grasas saturadas -->
+              <div>
+                <label for="in-saturadas" class="block text-xs font-semibold text-slate-700 mb-1">4. Grasas saturadas (g)</label>
+                <input id="in-saturadas" type="number" min="0" max="100" step="0.1" value="0"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+
+              <!-- 5. Sodio -->
+              <div>
+                <label for="in-sodio" class="block text-xs font-semibold text-slate-700 mb-1">5. Sodio (mg)</label>
+                <input id="in-sodio" type="number" min="0" max="5000" step="1" value="1"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+
+              <!-- 6. Proteínas -->
+              <div>
+                <label for="in-proteinas" class="block text-xs font-semibold text-slate-700 mb-1">6. Proteínas (g)</label>
+                <input id="in-proteinas" type="number" min="0" max="100" step="0.1" value="0.3"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+
+              <!-- 7. Fibra -->
+              <div>
+                <label for="in-fibra" class="block text-xs font-semibold text-slate-700 mb-1">7. Fibra dietética (g)</label>
+                <input id="in-fibra" type="number" min="0" max="100" step="0.1" value="2.4"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+
+              <!-- 8. Carbohidratos -->
+              <div>
+                <label for="in-carbohidratos" class="block text-xs font-semibold text-slate-700 mb-1">8. Carbohidratos totales (g)</label>
+                <input id="in-carbohidratos" type="number" min="0" max="100" step="0.1" value="13.8"
+                  class="mlp-input w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Panel de Resultados en Tiempo Real -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Tarjeta de Clasificación de la Red Neuronal MLP -->
+          <div id="result-card" class="bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-slate-200/60 border-2 border-brand-700 transition-all duration-300">
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Salida Red Neuronal MLP</span>
+              <span id="food-title-badge" class="px-3 py-1 rounded-full bg-brand-50 text-brand-800 text-xs font-bold">🍎 Manzana fresca</span>
+            </div>
+
+            <!-- Insignia Principal -->
+            <div id="verdict-box" class="rounded-2xl p-5 bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-4 mb-5 transition-colors">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-brand-800" id="verdict-subtitle">Clasificación Nutricional</p>
+                <h3 id="verdict-label" class="text-2xl sm:text-3xl font-extrabold text-brand-700 mt-0.5">Saludable</h3>
+                <p id="verdict-desc" class="text-xs text-slate-600 mt-1">Opción favorable para consumo habitual dentro de una dieta equilibrada.</p>
+              </div>
+              <div id="verdict-icon" class="w-14 h-14 rounded-2xl bg-brand-700 text-white flex items-center justify-center shrink-0 shadow-md">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Distribución de Probabilidad Softmax -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">Distribución de Probabilidad (Capa Softmax)</span>
+                <span class="text-[11px] text-slate-500">Suma = 100%</span>
+              </div>
+
+              <!-- Saludable -->
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-brand-700">Neurona 1: Saludable</span>
+                  <span id="prob-saludable-text" class="text-slate-800 font-bold">94.2%</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div id="prob-saludable-bar" class="h-full bg-brand-700 rounded-full transition-all duration-500" style="width: 94.2%"></div>
+                </div>
+              </div>
+
+              <!-- Moderado -->
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-amber-600">Neurona 2: Moderado</span>
+                  <span id="prob-moderado-text" class="text-slate-800 font-bold">4.8%</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div id="prob-moderado-bar" class="h-full bg-amber-500 rounded-full transition-all duration-500" style="width: 4.8%"></div>
+                </div>
+              </div>
+
+              <!-- Poco Saludable -->
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-red-600">Neurona 3: Poco Saludable</span>
+                  <span id="prob-poco-text" class="text-slate-800 font-bold">1.0%</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div id="prob-poco-bar" class="h-full bg-red-600 rounded-full transition-all duration-500" style="width: 1.0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculadora de Calorías y Macros por Porción -->
+            <div class="bg-[#f4f7f4] rounded-2xl p-4 border border-emerald-100 mb-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Cálculo por Porción (<span id="portion-display">100</span> g/ml)</span>
+                <span class="text-[11px] font-semibold text-brand-700">Módulo Matemático</span>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span id="calc-calories" class="text-3xl font-extrabold text-slate-900">52.0</span>
+                <span class="text-sm font-bold text-slate-600">kcal totales en la porción</span>
+              </div>
+              <div class="grid grid-cols-4 gap-2 mt-3 pt-3 border-t border-emerald-200/70 text-center">
+                <div>
+                  <span class="block text-[10px] text-slate-500 font-medium">Proteínas</span>
+                  <span id="calc-prot" class="text-xs font-bold text-slate-800">0.3 g</span>
+                </div>
+                <div>
+                  <span class="block text-[10px] text-slate-500 font-medium">Carbos</span>
+                  <span id="calc-carb" class="text-xs font-bold text-slate-800">13.8 g</span>
+                </div>
+                <div>
+                  <span class="block text-[10px] text-slate-500 font-medium">Grasas</span>
+                  <span id="calc-fat" class="text-xs font-bold text-slate-800">0.2 g</span>
+                </div>
+                <div>
+                  <span class="block text-[10px] text-slate-500 font-medium">Azúcares</span>
+                  <span id="calc-sugar" class="text-xs font-bold text-slate-800">10.4 g</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explicabilidad y Sellos NOM-051 -->
+            <div class="space-y-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">Factores Detectados &amp; Referencia NOM-051</h4>
+              <ul id="reasons-list" class="space-y-1.5 text-xs text-slate-700">
+                <!-- Rellenado dinámicamente -->
+              </ul>
+
+              <!-- Sellos Octagonales NOM-051 -->
+              <div id="nom051-container" class="pt-2">
+                <!-- Rellenado dinámicamente -->
+              </div>
+            </div>
+
+            <!-- Aviso Ético -->
+            <div class="mt-5 pt-4 border-t border-slate-100 flex items-start gap-2.5 text-[11px] text-slate-500">
+              <svg class="w-4 h-4 text-slate-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p><strong>Aviso ético:</strong> Esta clasificación generada por IA tiene fines exclusivamente educativos y de orientación nutricional general; <strong>no sustituye un diagnóstico ni recomendación médica personalizada</strong>.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 3: Catálogo Interactivo de Alimentos (Dataset de Muestra) -->
+    <section id="catalogo" class="scroll-mt-20">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-slate-200/50 border border-emerald-100">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-700">Base de Datos de Referencia (Por 100 g / 100 ml)</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Catálogo Interactivo de Alimentos</h2>
+            <p class="text-sm text-slate-600 mt-1">Explora registros inspirados en USDA FoodData Central, Open Food Facts y productos locales de México.</p>
+          </div>
+
+          <!-- Buscador -->
+          <div class="relative w-full lg:w-72">
+            <input id="catalog-search" type="text" placeholder="Buscar un alimento..."
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-[#f4f7f4] text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-700" />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Filtros por Categoría (Inspirados en Mockup Página 11) -->
+        <div class="flex flex-wrap gap-2 mb-6" id="category-filters">
+          <button type="button" data-cat="Todos" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white shadow-sm transition">Todos</button>
+          <button type="button" data-cat="Frutas" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#f4f7f4] text-slate-700 hover:bg-emerald-100 transition">🍎 Frutas</button>
+          <button type="button" data-cat="Verduras" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#f4f7f4] text-slate-700 hover:bg-emerald-100 transition">🥦 Verduras</button>
+          <button type="button" data-cat="Lácteos" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#f4f7f4] text-slate-700 hover:bg-emerald-100 transition">🥛 Lácteos</button>
+          <button type="button" data-cat="Cereales" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#f4f7f4] text-slate-700 hover:bg-emerald-100 transition">🌾 Cereales</button>
+          <button type="button" data-cat="Bebidas" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#f4f7f4] text-slate-700 hover:bg-emerald-100 transition">🥤 Bebidas</button>
+          <button type="button" data-cat="Botanas" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#f4f7f4] text-slate-700 hover:bg-emerald-100 transition">🍟 Botanas</button>
+        </div>
+
+        <!-- Cuadrícula de Tarjetas de Alimentos -->
+        <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <!-- Generado dinámicamente por JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 4: Visualizador Interactivo de la Arquitectura MLP (8 -> 16 -> 8 -> 3) -->
+    <section id="arquitectura" class="scroll-mt-20 space-y-8">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-slate-200/50 border border-emerald-100">
+        <div class="max-w-3xl mb-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-700">Informe Técnico · Actividad 7</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Visualizador de la Red Neuronal Multicapa (MLP)</h2>
+          <p class="text-sm text-slate-600 mt-1">
+            Arquitectura feedforward acíclica <strong>8 → 16 → 8 → 3</strong>. Haz clic o pasa el cursor sobre cada capa para inspeccionar cómo procesa los datos nutricionales actuales.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Diagrama SVG Interactivo -->
+          <div class="lg:col-span-8 bg-[#f4f7f4] rounded-2xl p-3 sm:p-4 border border-emerald-100 overflow-hidden">
+            <svg id="mlp-svg" viewBox="0 0 820 420" class="w-full h-auto select-none" role="img" aria-label="Diagrama interactivo de Red Neuronal Multicapa 8-16-8-3">
+              <!-- Sinapsis y Neuronas generadas dinámicamente por JS -->
+            </svg>
+            <div class="flex flex-wrap items-center justify-between gap-2 px-2 pt-2 text-[11px] text-slate-500">
+              <span>* Los valores mostrados reflejan el alimento cargado actualmente en el clasificador.</span>
+              <span class="font-semibold text-brand-700">Flujo unidireccional (Forward Pass)</span>
+            </div>
+          </div>
+
+          <!-- Panel de Inspección de Capa Seleccionada -->
+          <div class="lg:col-span-4 space-y-4">
+            <div id="layer-inspector" class="rounded-2xl p-5 bg-emerald-950 text-white shadow-lg space-y-3">
+              <div class="flex items-center justify-between">
+                <span id="inspector-badge" class="px-2.5 py-1 rounded-lg bg-brand-700 text-xs font-bold">Capa de Entrada</span>
+                <span id="inspector-neurons" class="text-xs font-mono text-emerald-300">8 Neuronas</span>
+              </div>
+              <h3 id="inspector-title" class="text-lg font-bold">Estandarización (StandardScaler)</h3>
+              <p id="inspector-desc" class="text-xs text-emerald-100/90 leading-relaxed">
+                Recibe los 8 atributos nutricionales por 100 g y aplica estandarización Z-score: <code class="bg-emerald-900 px-1.5 py-0.5 rounded text-emerald-200">z = (x - μ) / σ</code> para equilibrar escalas dispares (ej. Sodio en mg frente a Grasas en g).
+              </p>
+              <div id="inspector-extra" class="pt-2 border-t border-emerald-800/80 text-[11px] text-emerald-200 space-y-1 font-mono">
+                <!-- Valores Z actuales -->
+              </div>
+            </div>
+
+            <!-- Botones rápidos de selección de capa -->
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" data-layer="0" class="layer-select-btn px-3 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition">1. Entrada (8)</button>
+              <button type="button" data-layer="1" class="layer-select-btn px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-emerald-100 transition">2. Oculta 1 (16)</button>
+              <button type="button" data-layer="2" class="layer-select-btn px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-emerald-100 transition">3. Oculta 2 (8)</button>
+              <button type="button" data-layer="3" class="layer-select-btn px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-emerald-100 transition">4. Salida (3)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas Técnicas de Entrenamiento, Validación y Fuentes -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8 pt-8 border-t border-emerald-100">
+          <!-- Entrenamiento y Optimización -->
+          <div class="p-5 rounded-2xl bg-[#f4f7f4] border border-emerald-100 space-y-2.5">
+            <div class="w-9 h-9 rounded-xl bg-brand-700 text-white flex items-center justify-center font-bold text-sm">⚙️</div>
+            <h3 class="font-bold text-slate-900 text-base">Algoritmo de Entrenamiento</h3>
+            <ul class="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+              <li>• <strong>Activación Oculta:</strong> ReLU <code class="text-slate-800">f(x) = max(0, x)</code> para evitar desvanecimiento de gradiente.</li>
+              <li>• <strong>Función de Pérdida:</strong> Entropía Cruzada Categórica (Categorical Cross-Entropy).</li>
+              <li>• <strong>Optimización:</strong> Retropropagación (Backpropagation) + <strong>Optimizador Adam</strong>.</li>
+            </ul>
+          </div>
+
+          <!-- Validación y Regularización -->
+          <div class="p-5 rounded-2xl bg-[#f4f7f4] border border-emerald-100 space-y-2.5">
+            <div class="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold text-sm">📊</div>
+            <h3 class="font-bold text-slate-900 text-base">Validación y Control Overfitting</h3>
+            <ul class="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+              <li>• <strong>Hold-Out Estratificado:</strong> 70% Entrenamiento, 15% Validación, 15% Prueba.</li>
+              <li>• <strong>Validación Cruzada:</strong> Stratified K-Fold (<code class="text-slate-800">K = 5</code>) sin fuga de datos.</li>
+              <li>• <strong>Regularización:</strong> Early Stopping + Dropout condicional (<code class="text-slate-800">0.2</code>) y meta F1-Score &gt; 80%.</li>
+            </ul>
+          </div>
+
+          <!-- Fuentes de Datos -->
+          <div class="p-5 rounded-2xl bg-[#f4f7f4] border border-emerald-100 space-y-2.5">
+            <div class="w-9 h-9 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-sm">🗄️</div>
+            <h3 class="font-bold text-slate-900 text-base">Fuentes del Dataset</h3>
+            <ul class="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+              <li>• <strong>USDA FoodData Central:</strong> Más de 300,000 registros nutricionales estandarizados.</li>
+              <li>• <strong>Open Food Facts:</strong> Base abierta global de productos procesados.</li>
+              <li>• <strong>Etiquetas México (NOM-051):</strong> Validación con sellos y productos locales.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 5: Contexto del Proyecto y Problemática en México -->
+    <section id="proyecto" class="scroll-mt-20">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-slate-200/50 border border-emerald-100">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-700">Contexto Social e Impacto · Actividad 5</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">¿Por qué clasificar alimentos con Inteligencia Artificial en México?</h2>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              De acuerdo con datos de <strong>UNICEF</strong> y el <strong>Atlas Mundial de la Obesidad 2026</strong>, aproximadamente <strong>1 de cada 3 niñas y niños mayores de 5 años</strong> en México presenta sobrepeso u obesidad, ubicando al país entre los primeros lugares mundiales con más de 13 millones de menores afectados.
+            </p>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Aunque la norma <strong>NOM-051</strong> implementó sellos frontales de advertencia, interpretar rápidamente el conjunto completo de calorías, azúcares, grasas saturadas, sodio, fibra y proteínas sigue siendo un reto cotidiano. <strong>NutriIA MLP</strong> traduce estos 8 parámetros en una orientación clara, inmediata y accesible.
+            </p>
+
+            <!-- Etapas de desarrollo -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2">
+              <div class="p-3 rounded-xl bg-[#f4f7f4] border border-emerald-100 text-center">
+                <span class="text-[10px] font-bold text-brand-700 block">PASO 1</span>
+                <span class="text-xs font-bold text-slate-800">Recolección</span>
+              </div>
+              <div class="p-3 rounded-xl bg-[#f4f7f4] border border-emerald-100 text-center">
+                <span class="text-[10px] font-bold text-brand-700 block">PASO 2</span>
+                <span class="text-xs font-bold text-slate-800">StandardScaler</span>
+              </div>
+              <div class="p-3 rounded-xl bg-[#f4f7f4] border border-emerald-100 text-center">
+                <span class="text-[10px] font-bold text-brand-700 block">PASO 3</span>
+                <span class="text-xs font-bold text-slate-800">Entrenamiento</span>
+              </div>
+              <div class="p-3 rounded-xl bg-[#f4f7f4] border border-emerald-100 text-center">
+                <span class="text-[10px] font-bold text-brand-700 block">PASO 4</span>
+                <span class="text-xs font-bold text-slate-800">Evaluación F1</span>
+              </div>
+              <div class="col-span-2 sm:col-span-1 p-3 rounded-xl bg-brand-700 text-white text-center">
+                <span class="text-[10px] font-bold text-emerald-200 block">PASO 5</span>
+                <span class="text-xs font-bold">Clasificación</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stack Tecnológico del Proyecto -->
+          <div class="lg:col-span-5 bg-[#f4f7f4] rounded-2xl p-6 border border-emerald-100 space-y-4">
+            <h3 class="font-extrabold text-slate-900 text-base">Stack Tecnológico de la Propuesta</h3>
+            <div class="space-y-3 text-xs">
+              <div class="p-3.5 rounded-xl bg-white border border-emerald-100 flex items-center justify-between">
+                <span class="font-bold text-slate-800">Frontend &amp; UI</span>
+                <span class="text-slate-600 font-medium">React / Vite · HTML5 · Tailwind CSS</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white border border-emerald-100 flex items-center justify-between">
+                <span class="font-bold text-slate-800">Inteligencia Artificial</span>
+                <span class="text-slate-600 font-medium">Red MLP · TensorFlow / Keras · Scikit-learn</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white border border-emerald-100 flex items-center justify-between">
+                <span class="font-bold text-slate-800">Backend &amp; API</span>
+                <span class="text-slate-600 font-medium">Python (FastAPI / Flask REST)</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white border border-emerald-100 flex items-center justify-between">
+                <span class="font-bold text-slate-800">Almacenamiento</span>
+                <span class="text-slate-600 font-medium">PostgreSQL / MySQL</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Pie de Página Institucional -->
+  <footer class="bg-slate-900 text-slate-300 border-t border-slate-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2.5">
+            <span class="w-3 h-3 rounded-full bg-brand-500"></span>
+            <span class="font-extrabold text-white text-lg tracking-tight">Universidad Autónoma de Nuevo León (UANL)</span>
+          </div>
+          <p class="text-sm text-emerald-400 font-semibold">Facultad de Ingeniería Mecánica y Eléctrica (FIME)</p>
+          <p class="text-xs text-slate-400">Unidad de Aprendizaje: <strong>Seminario de Sistemas II</strong> · Grupo: <strong>002</strong> · Monterrey, Nuevo León, México (2026)</p>
+        </div>
+
+        <div class="md:text-right space-y-1.5 text-xs">
+          <p class="text-slate-400">Docente: <strong class="text-white">Ing. Tomás Eloy Salais Fierro</strong></p>
+          <p class="text-slate-400">Autoras del Proyecto (IAS):</p>
+          <p class="text-white font-semibold">Andrea Portillo Rodríguez (Mat. 2001785)</p>
+          <p class="text-white font-semibold">Leslie Alejandra Flores Martínez (Mat. 1981791)</p>
+        </div>
+      </div>
+      <div class="mt-8 pt-6 border-t border-slate-800 text-center text-[11px] text-slate-500">
+        Proyecto Académico: Clasificación de Alimentos mediante Perceptrón Multicapa (MLP) · Todos los cálculos son orientativos y educativos.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lógica Matemática Real de la Red Neuronal Multicapa (MLP) e Interactividad -->
+  <script>
+    /**
+     * =========================================================================
+     * 1. DATASET DE ALIMENTOS DEL PROYECTO (Valores por cada 100 g o 100 ml)
+     * Atributos: [calorias, azucares, grasas, saturadas, sodio, proteinas, fibra, carbohidratos]
+     * =========================================================================
+     */
+    const FOOD_DATASET = [
+      {
+        name: "Manzana fresca",
+        emoji: "🍎",
+        category: "Frutas",
+        portionDefault: 100,
+        features: [52, 10.4, 0.2, 0.0, 1, 0.3, 2.4, 13.8],
+        source: "USDA FoodData Central"
+      },
+      {
+        name: "Avena en hojuelas",
+        emoji: "🌾",
+        category: "Cereales",
+        portionDefault: 100,
+        features: [389, 0.9, 6.9, 1.2, 2, 16.9, 10.6, 66.3],
+        source: "USDA FoodData Central"
+      },
+      {
+        name: "Yogur natural sin azúcar",
+        emoji: "🥛",
+        category: "Lácteos",
+        portionDefault: 100,
+        features: [61, 4.7, 3.3, 2.1, 46, 3.5, 0.0, 4.7],
+        source: "USDA / Reporte Act. 7"
+      },
+      {
+        name: "Aguacate Hass",
+        emoji: "🥑",
+        category: "Frutas",
+        portionDefault: 100,
+        features: [160, 0.7, 14.7, 2.1, 7, 2.0, 6.7, 8.5],
+        source: "USDA FoodData Central"
+      },
+      {
+        name: "Brócoli cocido",
+        emoji: "🥦",
+        category: "Verduras",
+        portionDefault: 100,
+        features: [35, 1.4, 0.4, 0.1, 41, 2.4, 3.3, 7.2],
+        source: "USDA FoodData Central"
+      },
+      {
+        name: "Pechuga de pollo asada",
+        emoji: "🍗",
+        category: "Lácteos", // Agrupado en proteínas/frescos o visible en Todos
+        displayCat: "Frescos",
+        portionDefault: 100,
+        features: [165, 0.0, 3.6, 1.0, 74, 31.0, 0.0, 0.0],
+        source: "USDA FoodData Central"
+      },
+      {
+        name: "Pan de caja integral",
+        emoji: "🍞",
+        category: "Cereales",
+        portionDefault: 100,
+        features: [247, 4.3, 3.4, 0.7, 450, 13.0, 6.0, 41.0],
+        source: "Open Food Facts México"
+      },
+      {
+        name: "Queso panela fresco",
+        emoji: "🧀",
+        category: "Lácteos",
+        portionDefault: 100,
+        features: [215, 2.0, 15.0, 9.0, 380, 18.0, 0.0, 2.5],
+        source: "Etiquetas México"
+      },
+      {
+        name: "Jugo de fruta industrializado",
+        emoji: "🧃",
+        category: "Bebidas",
+        portionDefault: 200,
+        features: [48, 11.5, 0.0, 0.0, 15, 0.2, 0.1, 11.8],
+        source: "Open Food Facts México"
+      },
+      {
+        name: "Refresco de cola regular",
+        emoji: "🥤",
+        category: "Bebidas",
+        portionDefault: 250,
+        features: [42, 10.6, 0.0, 0.0, 10, 0.0, 0.0, 10.6],
+        source: "Reporte Act. 7 / NOM-051"
+      },
+      {
+        name: "Papas fritas comerciales",
+        emoji: "🍟",
+        category: "Botanas",
+        portionDefault: 100,
+        features: [312, 0.3, 15.0, 4.5, 500, 3.4, 3.1, 35.0],
+        source: "Reporte Act. 7 / NOM-051"
+      },
+      {
+        name: "Galletas dulces rellenas",
+        emoji: "🍪",
+        category: "Botanas",
+        portionDefault: 100,
+        features: [480, 25.0, 20.0, 8.0, 400, 6.0, 2.0, 68.0],
+        source: "Presentación Act. 6 / NOM-051"
+      }
+    ];
+
+    /**
+     * =========================================================================
+     * 2. MOTOR MATEMÁTICO DEL PERCEPTRÓN MULTICAPA (MLP: 8 -> 16 -> 8 -> 3)
+     * - Preprocesamiento: StandardScaler z = (x - mu) / sigma
+     * - Capa Oculta 1: 16 neuronas con activación ReLU(z) = max(0, z)
+     * - Capa Oculta 2: 8 neuronas con activación ReLU(z) = max(0, z)
+     * - Capa de Salida: 3 neuronas con activación Softmax
+     *   [0: Saludable, 1: Moderado, 2: Poco Saludable]
+     * =========================================================================
+     */
+    const SCALER_MEAN = [205.0, 8.2, 7.8, 2.6, 210.0, 8.5, 3.2, 25.0];
+    const SCALER_STD  = [145.0, 7.5, 6.8, 2.8, 195.0, 9.2, 3.1, 21.0];
+
+    // Pesos W1 (16 neuronas x 8 entradas) calibrados sobre el espacio estandarizado nutricional
+    // Orden de entradas: [0:Calorías, 1:Azúcares, 2:Grasas, 3:Saturadas, 4:Sodio, 5:Proteínas, 6:Fibra, 7:Carbohidratos]
+    const W1 = [
+      [-0.45, -0.85, -0.55, -0.80, -0.75,  0.65,  0.85, -0.20], // N0: Detector perfil limpio/natural
+      [ 0.55,  0.95,  0.30,  0.40,  0.35, -0.50, -0.65,  0.55], // N1: Detector exceso azúcares/refinados
+      [ 0.65,  0.20,  0.85,  0.90,  0.85, -0.35, -0.45,  0.30], // N2: Detector exceso grasas saturadas + sodio
+      [-0.25, -0.45, -0.20, -0.35, -0.30,  0.90,  0.95,  0.10], // N3: Detector alta densidad proteica y fibra
+      [ 0.40,  0.50,  0.45,  0.55,  0.65, -0.20, -0.30,  0.35], // N4: Detector carga ultraprocesada media
+      [-0.60, -0.35, -0.65, -0.70, -0.60,  0.40,  0.55, -0.30], // N5: Detector baja densidad energética limpia
+      [ 0.15,  0.80, -0.40, -0.35, -0.25, -0.60, -0.70,  0.45], // N6: Detector bebidas azucaradas (baja grasa, alto azúcar, cero fibra)
+      [ 0.35, -0.10,  0.40,  0.35,  0.55,  0.35,  0.25,  0.20], // N7: Detector alimentos mixtos / moderados (ej. pan integral, queso)
+      [-0.30, -0.60, -0.30, -0.50, -0.55,  0.55,  0.70, -0.15], // N8: Detector micronutrientes/fibra favorable
+      [ 0.75,  0.70,  0.75,  0.85,  0.70, -0.45, -0.50,  0.60], // N9: Detector hipercalórico ultraprocesado (galletas/frituras)
+      [ 0.25,  0.35,  0.25,  0.30,  0.40,  0.15,  0.10,  0.25], // N10: Detector umbral intermedio
+      [-0.15, -0.75,  0.35, -0.20, -0.45,  0.25,  0.80, -0.25], // N11: Modulador grasa saludable + fibra (ej. aguacate)
+      [ 0.50,  0.40,  0.60,  0.75,  0.80, -0.25, -0.35,  0.25], // N12: Detector sodio + saturadas alto
+      [-0.40, -0.50, -0.45, -0.60, -0.50,  0.75,  0.60, -0.20], // N13: Detector balance saludable
+      [ 0.30,  0.45,  0.35,  0.40,  0.45,  0.10, -0.15,  0.35], // N14: Detector consumo moderado
+      [ 0.80,  0.85,  0.80,  0.90,  0.85, -0.55, -0.60,  0.50]  // N15: Detector alerta crítica nutricional
+    ];
+    const B1 = [0.45, 0.15, 0.15, 0.35, 0.30, 0.40, 0.20, 0.45, 0.35, 0.10, 0.40, 0.30, 0.15, 0.40, 0.35, 0.05];
+
+    // Pesos W2 (8 neuronas x 16 entradas de Capa Oculta 1)
+    const W2 = [
+      [ 0.75, -0.50, -0.55,  0.80, -0.35,  0.70, -0.60,  0.10,  0.65, -0.65, -0.10,  0.75, -0.55,  0.75, -0.20, -0.70], // H0: Síntesis Saludable A
+      [ 0.65, -0.45, -0.50,  0.70, -0.30,  0.60, -0.55,  0.15,  0.60, -0.60, -0.05,  0.65, -0.50,  0.65, -0.15, -0.65], // H1: Síntesis Saludable B
+      [-0.15,  0.25,  0.20,  0.10,  0.65, -0.10,  0.20,  0.80, -0.10,  0.15,  0.75,  0.15,  0.20, -0.10,  0.75,  0.10], // H2: Síntesis Moderado A
+      [-0.10,  0.30,  0.25,  0.15,  0.60, -0.15,  0.25,  0.75, -0.05,  0.20,  0.70,  0.10,  0.25, -0.05,  0.70,  0.15], // H3: Síntesis Moderado B
+      [-0.60,  0.85,  0.85, -0.55,  0.35, -0.60,  0.90,  0.10, -0.55,  0.90,  0.15, -0.50,  0.85, -0.60,  0.25,  0.95], // H4: Síntesis Poco Saludable A
+      [-0.55,  0.80,  0.80, -0.50,  0.30, -0.55,  0.85,  0.15, -0.50,  0.85,  0.20, -0.45,  0.80, -0.55,  0.20,  0.90], // H5: Síntesis Poco Saludable B
+      [ 0.45, -0.30, -0.35,  0.50,  0.25,  0.40, -0.35,  0.45,  0.40, -0.40,  0.35,  0.50, -0.30,  0.45,  0.30, -0.45], // H6: Balance Favorable-Moderado
+      [-0.35,  0.55,  0.55, -0.30,  0.45, -0.35,  0.60,  0.30, -0.30,  0.60,  0.35, -0.25,  0.55, -0.35,  0.40,  0.65]  // H7: Balance Moderado-Riesgo
+    ];
+    const B2 = [0.20, 0.15, 0.35, 0.30, 0.10, 0.10, 0.25, 0.15];
+
+    // Pesos W3 (3 neuronas de salida x 8 entradas de Capa Oculta 2)
+    const W3 = [
+      [ 1.35,  1.25, -0.45, -0.40, -1.45, -1.35,  0.65, -0.85], // Logit 0: Saludable
+      [-0.35, -0.30,  1.25,  1.15, -0.35, -0.30,  0.55,  0.45], // Logit 1: Moderado
+      [-1.30, -1.20, -0.35, -0.30,  1.45,  1.35, -0.65,  0.90]  // Logit 2: Poco Saludable
+    ];
+    const B3 = [0.15, 0.35, -0.10];
+
+    function relu(x) {
+      return Math.max(0, x);
+    }
+
+    function softmax(logits) {
+      const maxLogit = Math.max(...logits);
+      const exps = logits.map(l => Math.exp(l - maxLogit));
+      const sumExps = exps.reduce((a, b) => a + b, 0);
+      return exps.map(e => e / sumExps);
+    }
+
+    /**
+     * Ejecuta el Forward Pass completo del Perceptrón Multicapa
+     * @param {number[]} rawFeatures - Vector de 8 atributos nutricionales por 100g
+     */
+    function forwardPassMLP(rawFeatures) {
+      // 1. Estandarización Z-score (StandardScaler)
+      const zInput = rawFeatures.map((val, i) => (val - SCALER_MEAN[i]) / SCALER_STD[i]);
+
+      // 2. Primera Capa Oculta (16 neuronas + ReLU)
+      const hidden1 = W1.map((weights, i) => {
+        const sum = weights.reduce((acc, w, j) => acc + w * zInput[j], B1[i]);
+        return relu(sum);
+      });
+
+      // 3. Segunda Capa Oculta (8 neuronas + ReLU)
+      const hidden2 = W2.map((weights, i) => {
+        const sum = weights.reduce((acc, w, j) => acc + w * hidden1[j], B2[i]);
+        return relu(sum);
+      });
+
+      // 4. Capa de Salida (3 neuronas + Softmax)
+      const logits = W3.map((weights, i) => {
+        return weights.reduce((acc, w, j) => acc + w * hidden2[j], B3[i]);
+      });
+
+      const probabilities = softmax(logits);
+      const maxProb = Math.max(...probabilities);
+      const predictedClass = probabilities.indexOf(maxProb);
+
+      return {
+        rawFeatures,
+        zInput,
+        hidden1,
+        hidden2,
+        logits,
+        probabilities,
+        predictedClass
+      };
+    }
+
+    /**
+     * =========================================================================
+     * 3. EXPLICABILIDAD Y CRITERIOS NOM-051 (POR 100 g / 100 ml)
+     * =========================================================================
+     */
+    function analyzeNutritionReasons(features, predictedClass) {
+      const [cal, azucar, grasas, saturadas, sodio, prot, fibra, carbos] = features;
+      const reasons = [];
+      const seals = [];
+
+      // Evaluación de sellos de advertencia NOM-051 (referencia por 100g sólidos)
+      if (cal >= 275) {
+        seals.push("EXCESO CALORÍAS");
+        reasons.push({ type: "warn", text: `Densidad energética elevada (${cal} kcal / 100g).` });
+      }
+      if (azucar >= 10) {
+        seals.push("EXCESO AZÚCARES");
+        reasons.push({ type: "warn", text: `Alto aporte de azúcares (${azucar} g / 100g).` });
+      }
+      if (saturadas >= 4) {
+        seals.push("EXCESO GRASAS SATURADAS");
+        reasons.push({ type: "warn", text: `Contenido elevado de grasas saturadas (${saturadas} g / 100g).` });
+      }
+      if (sodio >= 300) {
+        seals.push("EXCESO SODIO");
+        reasons.push({ type: "warn", text: `Alto contenido de sodio (${sodio} mg / 100g).` });
+      }
+
+      // Factores protectores detectados por la red neuronal
+      if (fibra >= 3.0) {
+        reasons.push({ type: "good", text: `Buen aporte de fibra dietética (${fibra} g / 100g) que modula la absorción glucémica.` });
+      }
+      if (prot >= 8.0) {
+        reasons.push({ type: "good", text: `Excelente fuente de proteínas (${prot} g / 100g).` });
+      }
+      if (cal < 100 && saturadas < 1.5 && sodio < 120 && azucar < 10) {
+        reasons.push({ type: "good", text: "Perfil bajo en calorías, grasas saturadas y sodio." });
+      }
+      if (fibra < 1.0 && azucar >= 10 && prot < 1.0) {
+        reasons.push({ type: "warn", text: "Azúcares libres sin fibra ni proteína que amortigüen el índice glucémico." });
+      }
+
+      if (reasons.length === 0) {
+        reasons.push({
+          type: "neutral",
+          text: "Balance intermedio de macronutrientes; recomendable vigilar el tamaño de porción."
+        });
+      }
+
+      return { reasons, seals };
+    }
+
+    /**
+     * =========================================================================
+     * 4. CONTROL DE INTERFAZ Y ACTUALIZACIÓN EN TIEMPO REAL
+     * =========================================================================
+     */
+    const inputIds = [
+      'in-calorias',
+      'in-azucares',
+      'in-grasas',
+      'in-saturadas',
+      'in-sodio',
+      'in-proteinas',
+      'in-fibra',
+      'in-carbohidratos'
+    ];
+
+    let currentFoodName = "🍎 Manzana fresca";
+    let selectedLayerIndex = 0;
+    let lastMLPResult = null;
+
+    function getInputsVector() {
+      return inputIds.map(id => {
+        const val = parseFloat(document.getElementById(id).value);
+        return isNaN(val) || val < 0 ? 0 : val;
+      });
+    }
+
+    function updateApplication() {
+      const features = getInputsVector();
+      const portion = Math.max(1, parseFloat(document.getElementById('input-portion').value) || 100);
+
+      // 1. Cálculo matemático independiente por porción
+      const factor = portion / 100.0;
+      const portionCalories = features[0] * factor;
+      const portionProt = features[5] * factor;
+      const portionCarb = features[7] * factor;
+      const portionFat = features[2] * factor;
+      const portionSugar = features[1] * factor;
+
+      document.getElementById('portion-display').textContent = portion;
+      document.getElementById('calc-calories').textContent = portionCalories.toFixed(1);
+      document.getElementById('calc-prot').textContent = `${portionProt.toFixed(1)} g`;
+      document.getElementById('calc-carb').textContent = `${portionCarb.toFixed(1)} g`;
+      document.getElementById('calc-fat').textContent = `${portionFat.toFixed(1)} g`;
+      document.getElementById('calc-sugar').textContent = `${portionSugar.toFixed(1)} g`;
+
+      // 2. Inferencia en Red Neuronal Multicapa (MLP)
+      const mlp = forwardPassMLP(features);
+      lastMLPResult = mlp;
+
+      const [pSal, pMod, pPoco] = mlp.probabilities;
+      document.getElementById('prob-saludable-text').textContent = `${(pSal * 100).toFixed(1)}%`;
+      document.getElementById('prob-saludable-bar').style.width = `${(pSal * 100).toFixed(1)}%`;
+
+      document.getElementById('prob-moderado-text').textContent = `${(pMod * 100).toFixed(1)}%`;
+      document.getElementById('prob-moderado-bar').style.width = `${(pMod * 100).toFixed(1)}%`;
+
+      document.getElementById('prob-poco-text').textContent = `${(pPoco * 100).toFixed(1)}%`;
+      document.getElementById('prob-poco-bar').style.width = `${(pPoco * 100).toFixed(1)}%`;
+
+      // 3. Actualizar tarjeta visual de veredicto
+      const resultCard = document.getElementById('result-card');
+      const verdictBox = document.getElementById('verdict-box');
+      const verdictSubtitle = document.getElementById('verdict-subtitle');
+      const verdictLabel = document.getElementById('verdict-label');
+      const verdictDesc = document.getElementById('verdict-desc');
+      const verdictIcon = document.getElementById('verdict-icon');
+      document.getElementById('food-title-badge').textContent = currentFoodName;
+
+      if (mlp.predictedClass === 0) {
+        resultCard.className = "bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-emerald-900/10 border-2 border-brand-700 transition-all duration-300";
+        verdictBox.className = "rounded-2xl p-5 bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-4 mb-5 transition-colors";
+        verdictSubtitle.className = "text-xs font-semibold uppercase tracking-wider text-brand-800";
+        verdictLabel.className = "text-2xl sm:text-3xl font-extrabold text-brand-700 mt-0.5";
+        verdictLabel.textContent = "Saludable";
+        verdictDesc.textContent = "Opción favorable: perfil nutricional equilibrado para consumo habitual.";
+        verdictIcon.className = "w-14 h-14 rounded-2xl bg-brand-700 text-white flex items-center justify-center shrink-0 shadow-md";
+        verdictIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
+      } else if (mlp.predictedClass === 1) {
+        resultCard.className = "bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-amber-900/10 border-2 border-amber-600 transition-all duration-300";
+        verdictBox.className = "rounded-2xl p-5 bg-amber-50 border border-amber-200 flex items-center justify-between gap-4 mb-5 transition-colors";
+        verdictSubtitle.className = "text-xs font-semibold uppercase tracking-wider text-amber-800";
+        verdictLabel.className = "text-2xl sm:text-3xl font-extrabold text-amber-600 mt-0.5";
+        verdictLabel.textContent = "Moderado";
+        verdictDesc.textContent = "Opción intermedia: consumir cuidando el tamaño de la porción y frecuencia.";
+        verdictIcon.className = "w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-md";
+        verdictIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18 9 9 0 000-18z" /></svg>`;
+      } else {
+        resultCard.className = "bg-white rounded-3xl p-6 sm:p-7 shadow-xl shadow-red-900/10 border-2 border-red-600 transition-all duration-300";
+        verdictBox.className = "rounded-2xl p-5 bg-red-50 border border-red-200 flex items-center justify-between gap-4 mb-5 transition-colors";
+        verdictSubtitle.className = "text-xs font-semibold uppercase tracking-wider text-red-800";
+        verdictLabel.className = "text-2xl sm:text-3xl font-extrabold text-red-600 mt-0.5";
+        verdictLabel.textContent = "Poco Saludable";
+        verdictDesc.textContent = "Consumo ocasional: alta concentración de nutrientes críticos.";
+        verdictIcon.className = "w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-md";
+        verdictIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
+      }
+
+      // 4. Explicabilidad y Sellos NOM-051
+      const { reasons, seals } = analyzeNutritionReasons(features, mlp.predictedClass);
+      const reasonsList = document.getElementById('reasons-list');
+      reasonsList.innerHTML = reasons.map(r => {
+        const dotColor = r.type === 'good' ? 'bg-brand-700' : (r.type === 'warn' ? 'bg-red-600' : 'bg-amber-500');
+        return `<li class="flex items-start gap-2"><span class="w-2 h-2 rounded-full ${dotColor} mt-1.5 shrink-0"></span><span>${r.text}</span></li>`;
+      }).join('');
+
+      const nomContainer = document.getElementById('nom051-container');
+      if (seals.length > 0) {
+        nomContainer.innerHTML = `
+          <div class="flex flex-wrap gap-2 items-center">
+            ${seals.map(s => `
+              <div class="octagon-seal w-16 h-16 bg-slate-900 text-white flex items-center justify-center text-center p-1.5 shadow-sm">
+                <span class="text-[8px] font-extrabold leading-tight tracking-tight">${s}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        nomContainer.innerHTML = `
+          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-brand-800">
+            ✓ Sin sellos de advertencia NOM-051 por 100g
+          </div>
+        `;
+      }
+
+      // 5. Actualizar visualizador SVG de la Red Neuronal
+      renderMLPSVG(mlp);
+      updateLayerInspector(selectedLayerIndex);
+    }
+
+    /**
+     * =========================================================================
+     * 5. CARGA DE ALIMENTO EN EL CLASIFICADOR
+     * =========================================================================
+     */
+    function loadFoodIntoClassifier(foodName, scrollToTop = false) {
+      const item = FOOD_DATASET.find(f => f.name === foodName);
+      if (!item) return;
+
+      currentFoodName = `${item.emoji} ${item.name}`;
+      item.features.forEach((val, idx) => {
+        document.getElementById(inputIds[idx]).value = val;
+      });
+      document.getElementById('input-portion').value = item.portionDefault || 100;
+
+      // Sincronizar select
+      const select = document.getElementById('preset-select');
+      for (let i = 0; i < select.options.length; i++) {
+        if (item.name.startsWith(select.options[i].value) && select.options[i].value !== 'custom') {
+          select.selectedIndex = i;
+          break;
+        }
+      }
+
+      updateApplication();
+
+      if (scrollToTop) {
+        document.getElementById('clasificador').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 6. RENDERIZADO DEL CATÁLOGO DE ALIMENTOS
+     * =========================================================================
+     */
+    let activeCategory = "Todos";
+
+    function renderCatalog() {
+      const searchQuery = document.getElementById('catalog-search').value.trim().toLowerCase();
+      const grid = document.getElementById('catalog-grid');
+
+      const filtered = FOOD_DATASET.filter(food => {
+        const matchesCat = activeCategory === "Todos" || food.category === activeCategory;
+        const matchesText = food.name.toLowerCase().includes(searchQuery) || food.category.toLowerCase().includes(searchQuery);
+        return matchesCat && matchesText;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-8 text-sm text-slate-500">No se encontraron alimentos con ese filtro.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(food => {
+        const pred = forwardPassMLP(food.features);
+        let badgeStyle = "bg-emerald-100 text-brand-800";
+        let badgeText = "Saludable";
+        if (pred.predictedClass === 1) {
+          badgeStyle = "bg-amber-100 text-amber-800";
+          badgeText = "Moderado";
+        } else if (pred.predictedClass === 2) {
+          badgeStyle = "bg-red-100 text-red-800";
+          badgeText = "Poco Saludable";
+        }
+
+        return `
+          <div class="rounded-2xl bg-[#f4f7f4] hover:bg-white border border-emerald-100 hover:border-brand-300 p-4 flex flex-col justify-between transition shadow-sm hover:shadow-md">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <span class="text-2xl">${food.emoji}</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeStyle}">${badgeText}</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">${food.name}</h3>
+              <p class="text-[11px] text-slate-500 mb-3">${food.displayCat || food.category} · ${food.source}</p>
+              
+              <div class="grid grid-cols-2 gap-1.5 text-[11px] bg-white p-2.5 rounded-xl border border-emerald-100/80 mb-3">
+                <div><span class="text-slate-400">Calorías:</span> <strong class="text-slate-800">${food.features[0]} kcal</strong></div>
+                <div><span class="text-slate-400">Azúcar:</span> <strong class="text-slate-800">${food.features[1]} g</strong></div>
+                <div><span class="text-slate-400">Sodio:</span> <strong class="text-slate-800">${food.features[4]} mg</strong></div>
+                <div><span class="text-slate-400">Fibra:</span> <strong class="text-slate-800">${food.features[6]} g</strong></div>
+              </div>
+            </div>
+
+            <button type="button" onclick="loadFoodIntoClassifier('${food.name}', true)"
+              class="w-full py-2 px-3 rounded-xl bg-white hover:bg-brand-700 text-brand-800 hover:text-white border border-brand-200 hover:border-brand-700 text-xs font-bold transition">
+              Analizar en la red →
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /**
+     * =========================================================================
+     * 7. VISUALIZADOR SVG INTERACTIVO DE LA RED NEURONAL MULTICAPA (8-16-8-3)
+     * =========================================================================
+     */
+    const INPUT_LABELS = [
+      "Calorías",
+      "Azúcares",
+      "Grasas",
+      "G. Saturadas",
+      "Sodio",
+      "Proteínas",
+      "Fibra",
+      "Carbos"
+    ];
+    const OUTPUT_LABELS = ["Saludable", "Moderado", "Poco Saludable"];
+
+    function renderMLPSVG(mlp) {
+      const svg = document.getElementById('mlp-svg');
+      const layerSizes = [8, 16, 8, 3];
+      const layerX = [115, 325, 535, 710];
+      const height = 420;
+      const topPad = 48;
+      const bottomPad = 24;
+      const usableH = height - topPad - bottomPad;
+
+      // Calcular coordenadas (x, y) de cada neurona por capa
+      const coords = layerSizes.map((count, lIdx) => {
+        const step = usableH / (count + 1);
+        return Array.from({ length: count }, (_, nIdx) => ({
+          x: layerX[lIdx],
+          y: topPad + step * (nIdx + 1)
+        }));
+      });
+
+      let svgContent = '';
+
+      // Títulos de las columnas
+      const headers = [
+        { x: layerX[0], title: "Entrada (8)", sub: "StandardScaler" },
+        { x: layerX[1], title: "Oculta 1 (16)", sub: "ReLU" },
+        { x: layerX[2], title: "Oculta 2 (8)", sub: "ReLU" },
+        { x: layerX[3], title: "Salida (3)", sub: "Softmax" }
+      ];
+
+      headers.forEach((h, idx) => {
+        const activeFill = selectedLayerIndex === idx ? "#15803d" : "#334155";
+        svgContent += `
+          <g class="cursor-pointer" onclick="selectLayer(${idx})">
+            <text x="${h.x}" y="20" text-anchor="middle" font-size="12" font-weight="800" fill="${activeFill}">${h.title}</text>
+            <text x="${h.x}" y="35" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">${h.sub}</text>
+          </g>
+        `;
+      });
+
+      // Dibujar sinapsis entre capas
+      for (let l = 0; l < coords.length - 1; l++) {
+        const currLayer = coords[l];
+        const nextLayer = coords[l + 1];
+
+        currLayer.forEach((n1, i) => {
+          nextLayer.forEach((n2, j) => {
+            let strength = 0.25;
+            if (l === 0) strength = Math.min(0.85, Math.abs(mlp.zInput[i]) * 0.35 + 0.15);
+            if (l === 1) strength = mlp.hidden1[i] > 0.2 ? 0.55 : 0.12;
+            if (l === 2) strength = mlp.hidden2[i] > 0.2 ? 0.75 : 0.15;
+
+            const strokeColor = strength > 0.45 ? "#15803d" : "#94a3b8";
+            svgContent += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${strokeColor}" stroke-width="${strength > 0.45 ? 1.2 : 0.7}" stroke-opacity="${strength}" />`;
+          });
+        });
+      }
+
+      // Dibujar neuronas de Capa de Entrada (8)
+      coords[0].forEach((pt, i) => {
+        const zVal = mlp.zInput[i];
+        const fill = zVal > 0.5 ? "#d97706" : (zVal < -0.3 ? "#15803d" : "#0f172a");
+        svgContent += `
+          <g class="cursor-pointer" onclick="selectLayer(0)">
+            <text x="${pt.x - 14}" y="${pt.y + 3}" text-anchor="end" font-size="10" font-weight="600" fill="#334155">${INPUT_LABELS[i]}</text>
+            <circle cx="${pt.x}" cy="${pt.y}" r="8" fill="${fill}" stroke="#ffffff" stroke-width="2" />
+          </g>
+        `;
+      });
+
+      // Dibujar neuronas de Capa Oculta 1 (16)
+      const maxH1 = Math.max(...mlp.hidden1, 0.01);
+      coords[1].forEach((pt, i) => {
+        const act = mlp.hidden1[i] / maxH1;
+        const fill = act > 0.1 ? `rgba(21, 128, 61, ${0.35 + act * 0.65})` : "#cbd5e1";
+        svgContent += `
+          <g class="cursor-pointer" onclick="selectLayer(1)">
+            <circle cx="${pt.x}" cy="${pt.y}" r="6.5" fill="${fill}" stroke="#ffffff" stroke-width="1.5" />
+          </g>
+        `;
+      });
+
+      // Dibujar neuronas de Capa Oculta 2 (8)
+      const maxH2 = Math.max(...mlp.hidden2, 0.01);
+      coords[2].forEach((pt, i) => {
+        const act = mlp.hidden2[i] / maxH2;
+        const fill = act > 0.1 ? `rgba(21, 128, 61, ${0.35 + act * 0.65})` : "#cbd5e1";
+        svgContent += `
+          <g class="cursor-pointer" onclick="selectLayer(2)">
+            <circle cx="${pt.x}" cy="${pt.y}" r="8" fill="${fill}" stroke="#ffffff" stroke-width="2" />
+          </g>
+        `;
+      });
+
+      // Dibujar neuronas de Capa de Salida (3)
+      const outColors = ["#15803d", "#d97706", "#dc2626"];
+      coords[3].forEach((pt, i) => {
+        const prob = (mlp.probabilities[i] * 100).toFixed(0);
+        const isWinner = mlp.predictedClass === i;
+        svgContent += `
+          <g class="cursor-pointer" onclick="selectLayer(3)">
+            <circle cx="${pt.x}" cy="${pt.y}" r="${isWinner ? 13 : 10}" fill="${outColors[i]}" stroke="${isWinner ? '#bbf7d0' : '#ffffff'}" stroke-width="${isWinner ? 3 : 2}" />
+            <text x="${pt.x + 18}" y="${pt.y - 2}" text-anchor="start" font-size="10.5" font-weight="800" fill="${outColors[i]}">${OUTPUT_LABELS[i]}</text>
+            <text x="${pt.x + 18}" y="${pt.y + 10}" text-anchor="start" font-size="10" font-weight="700" fill="#475569">${prob}%</text>
+          </g>
+        `;
+      });
+
+      svg.innerHTML = svgContent;
+    }
+
+    function selectLayer(idx) {
+      selectedLayerIndex = idx;
+      document.querySelectorAll('.layer-select-btn').forEach(btn => {
+        const btnLayer = parseInt(btn.getAttribute('data-layer'), 10);
+        if (btnLayer === idx) {
+          btn.className = "layer-select-btn px-3 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition";
+        } else {
+          btn.className = "layer-select-btn px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-emerald-100 transition";
+        }
+      });
+      if (lastMLPResult) {
+        renderMLPSVG(lastMLPResult);
+        updateLayerInspector(idx);
+      }
+    }
+
+    function updateLayerInspector(idx) {
+      if (!lastMLPResult) return;
+      const badge = document.getElementById('inspector-badge');
+      const neurons = document.getElementById('inspector-neurons');
+      const title = document.getElementById('inspector-title');
+      const desc = document.getElementById('inspector-desc');
+      const extra = document.getElementById('inspector-extra');
+
+      if (idx === 0) {
+        badge.textContent = "Capa 1 · Entrada";
+        neurons.textContent = "8 Neuronas";
+        title.textContent = "Estandarización (StandardScaler)";
+        desc.innerHTML = `Transforma los 8 atributos nutricionales mediante <code class="bg-emerald-900 px-1 rounded">z = (x - μ) / σ</code> evitando fuga de datos (data leakage).`;
+        extra.innerHTML = `
+          <div>z(Calorías) = ${lastMLPResult.zInput[0].toFixed(2)} | z(Azúcar) = ${lastMLPResult.zInput[1].toFixed(2)}</div>
+          <div>z(Sodio) = ${lastMLPResult.zInput[4].toFixed(2)} | z(Fibra) = ${lastMLPResult.zInput[6].toFixed(2)}</div>
+        `;
+      } else if (idx === 1) {
+        badge.textContent = "Capa 2 · Oculta 1";
+        neurons.textContent = "16 Neuronas (ReLU)";
+        title.textContent = "Extracción de Correlaciones";
+        desc.innerHTML = `Combina linealmente las 8 entradas y aplica <code class="bg-emerald-900 px-1 rounded">f(x) = max(0, x)</code> para detectar interacciones no lineales entre nutrientes.`;
+        const activeCount = lastMLPResult.hidden1.filter(v => v > 0).length;
+        extra.innerHTML = `
+          <div>Neuronas activadas (ReLU &gt; 0): ${activeCount} de 16</div>
+          <div>Activación máxima: ${Math.max(...lastMLPResult.hidden1).toFixed(2)}</div>
+        `;
+      } else if (idx === 2) {
+        badge.textContent = "Capa 3 · Oculta 2";
+        neurons.textContent = "8 Neuronas (ReLU)";
+        title.textContent = "Abstracción de Perfil Saludable";
+        desc.innerHTML = `Comprime y refina los patrones de la primera capa oculta en representaciones de alto nivel antes de la decisión multiclase.`;
+        const activeCount2 = lastMLPResult.hidden2.filter(v => v > 0).length;
+        extra.innerHTML = `
+          <div>Neuronas activadas (ReLU &gt; 0): ${activeCount2} de 8</div>
+          <div>Regularización: Early Stopping + Dropout (0.2)</div>
+        `;
+      } else {
+        badge.textContent = "Capa 4 · Salida";
+        neurons.textContent = "3 Neuronas (Softmax)";
+        title.textContent = "Distribución de Probabilidad";
+        desc.innerHTML = `Convierte los logits finales en probabilidades normalizadas que suman 1.0 (100%) entrenadas con Entropía Cruzada Categórica y Adam.`;
+        const [p0, p1, p2] = lastMLPResult.probabilities;
+        extra.innerHTML = `
+          <div>P(Saludable)=${(p0 * 100).toFixed(1)}% | P(Moderado)=${(p1 * 100).toFixed(1)}%</div>
+          <div>P(Poco Saludable)=${(p2 * 100).toFixed(1)}%</div>
+        `;
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 8. INICIALIZACIÓN Y EVENT LISTENERS
+     * =========================================================================
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+      // Menú móvil
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+      });
+
+      // Selector de alimentos precargados
+      document.getElementById('preset-select').addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === 'custom') {
+          currentFoodName = "✏️ Alimento Personalizado";
+          updateApplication();
+        } else {
+          const match = FOOD_DATASET.find(f => f.name.startsWith(val));
+          if (match) loadFoodIntoClassifier(match.name, false);
+        }
+      });
+
+      // Inputs numéricos en tiempo real
+      inputIds.forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+          document.getElementById('preset-select').value = 'custom';
+          currentFoodName = "✏️ Alimento Personalizado";
+          updateApplication();
+        });
+      });
+
+      // Input de porción y chips rápidos
+      const portionInput = document.getElementById('input-portion');
+      portionInput.addEventListener('input', updateApplication);
+
+      document.querySelectorAll('.portion-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const p = chip.getAttribute('data-portion');
+          portionInput.value = p;
+          document.querySelectorAll('.portion-chip').forEach(c => {
+            c.className = "portion-chip px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-xs font-semibold text-slate-700 hover:bg-brand-700 hover:text-white transition";
+          });
+          chip.className = "portion-chip px-2.5 py-1 rounded-lg bg-brand-700 border border-brand-700 text-xs font-semibold text-white transition";
+          updateApplication();
+        });
+      });
+
+      // Botón restablecer
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        loadFoodIntoClassifier("Manzana fresca", false);
+      });
+
+      // Botones de selección de capa en visualizador MLP
+      document.querySelectorAll('.layer-select-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectLayer(parseInt(btn.getAttribute('data-layer'), 10));
+        });
+      });
+
+      // Filtros y búsqueda del catálogo
+      document.getElementById('catalog-search').addEventListener('input', renderCatalog);
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeCategory = btn.getAttribute('data-cat');
+          document.querySelectorAll('.cat-btn').forEach(b => {
+            b.className = "cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#f4f7f4] text-slate-700 hover:bg-emerald-100 transition";
+          });
+          btn.className = "cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white shadow-sm transition";
+          renderCatalog();
+        });
+      });
+
+      // Render inicial
+      renderCatalog();
+      updateApplication();
+    });
+  </script>
+</body>
+</html>
